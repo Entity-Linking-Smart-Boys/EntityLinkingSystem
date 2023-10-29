@@ -3,7 +3,7 @@ if __name__ == "__main__":
 
 from .candidate import Candidate
 
-class Entity:
+class Entity(object):
     """
     Entity mention class
     """
@@ -14,10 +14,13 @@ class Entity:
         
         self.uri: str = "" 
         self.dbpedia_class :str = " "
-        self.candidates = [Candidate] 
+        self.candidates: [Candidate] = []
 
     def set_dbp_class(self,new_class):
         self.dbpedia_class = new_class
 
     def set_candidates(self, candidates):
         self.candidates = candidates
+
+    def to_html(self) -> str:
+        return f"<span><a href=\"{self.uri}\">{self.surface_form}</a><sup>{self.ner_class} | {self.dbpedia_class}</sup></span>"

@@ -1,10 +1,15 @@
 if __name__ == "__main__":
     pass
 
+import json
+import jsonpickle
+from pathlib import Path
+from htmldom import htmldom
 
 import sys
 sys.path.append('../.')
 from data.text import Text
+
 
 
 class FileIO:
@@ -16,7 +21,7 @@ class FileIO:
     
 
     def load(self,textPath) -> Text:
-        file = open(textPath)
+        file = open(textPath, encoding="utf-8")
         text = file.read()
         file.close()
         return Text(text)
@@ -25,11 +30,29 @@ class FileIO:
         return Text(text_str)
     
     def load_tagged(self,textPath) -> Text:
-        pass
+        file = open(textPath, encoding="utf-8")
+        json_file = file.read()
+        file.close()
+        text = json.loads(jsonpickle.decode(json_file))
+        return text
+    
     
 
-    def save_tagged(self,text,path):
-        pass
+    def save_tagged(self, text: Text, path):
+        json_text = json.dumps(jsonpickle.encode(text))
+        file = open(path,mode = "w",encoding="utf-8")
+        file.write(json_text)
+        file.close()
+        return
     
-    def save_html(self,text,path):
-        pass
+    def save_html(self, text: Text, path):
+        tfile = open(f"{Path( __file__ ).parent.absolute()}/template.xhtml", mode= "r" , encoding="utf-8")
+        template = tfile.read()
+        tfile.close()
+        
+        dom = htmldom.HtmlDom().createDom(template)
+        dom.find("div[id=content]").text(text.get_html_text())
+
+        file = open(path,mode = "w",encoding="utf-8")
+        file.write("<!DOCTYPE html>"+dom.referenceToRootElement.html())
+        file.close()

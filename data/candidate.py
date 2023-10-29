@@ -1,7 +1,7 @@
 if __name__ == "__main__":
     pass
 
-class Candidate:
+class Candidate(object):
     """
     Class stores candidate information.
     Each candidate is assigned to specific entity.
