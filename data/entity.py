@@ -3,7 +3,7 @@ if __name__ == "__main__":
 
 from .candidate import Candidate
 
-class Entity:
+class Entity(object):
     """
     Entity mention class
     """
@@ -14,7 +14,7 @@ class Entity:
         
         self.uri: str = "" 
         self.dbpedia_class :str = " "
-        self.candidates = [Candidate] 
+        self.candidates: [Candidate] = []
 
     def set_dbp_class(self,new_class):
         self.dbpedia_class = new_class

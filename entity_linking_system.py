@@ -1,6 +1,8 @@
 if __name__ == "__main__":
     pass
 
+import os
+
 from file.io import FileIO
 from ned.ned_component import NEDComponent
 from ner.ner_component import NERComponent
@@ -43,8 +45,14 @@ class EntityLinkingSystem:
                 self.NED = NEDTest()
         return
 
-    def load_text(self,path):
-        self.text = self.IO.load(path)
+    def load_text(self,path: str):
+        ext = os.path.splitext(path)[1]
+        match ext:
+            case ".txt":
+                self.text = self.IO.load(path)
+            case ".json":
+                self.text = self.IO.load_tagged(path)
+        return
 
     def load_text_string(self,text_string):
         self.text = self.IO.load_string(text_string)
@@ -54,10 +62,12 @@ class EntityLinkingSystem:
         
     def ned(self):
         self.NED.NED(self.text)
-        pass
 
     def save_text(self,path):
         self.IO.save_tagged(self.text,path)
+
+    def save_html(self,path):
+        self.IO.save_html(self.text,path)
 
     def show_text(self):
         return self.text

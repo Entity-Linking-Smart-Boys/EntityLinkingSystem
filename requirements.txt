@@ -1,3 +1,5 @@
-spacy
+spacy == 3.7.2
 # python -m spacy download en_core_web_lg
-SPARQLWrapper
+SPARQLWrapper == 2.0.0
+jsonpickle == 3.0.2
+htmldom == 2.0
