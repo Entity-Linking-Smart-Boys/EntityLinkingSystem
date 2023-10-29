@@ -49,8 +49,10 @@ class FileIO:
         tfile = open(f"{Path( __file__ ).parent.absolute()}/template.xhtml", mode= "r" , encoding="utf-8")
         template = tfile.read()
         tfile.close()
+        
         dom = htmldom.HtmlDom().createDom(template)
         dom.find("div[id=content]").text(text.get_html_text())
+
         file = open(path,mode = "w",encoding="utf-8")
         file.write("<!DOCTYPE html>"+dom.referenceToRootElement.html())
         file.close()

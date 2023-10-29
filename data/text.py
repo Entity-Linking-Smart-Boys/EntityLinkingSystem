@@ -35,6 +35,6 @@ class Text(object):
 
         for entity in self.entity_mentions[::-1]:
             entity: Entity
-            tagged_text = tagged_text[:entity.position[0]] + f"<a href=\"{entity.uri}\">{entity.surface_form}<sup>{entity.ner_class}</sup></a>" + tagged_text[entity.position[1]:]
+            tagged_text = tagged_text[:entity.position[0]] + entity.to_html() + tagged_text[entity.position[1]:]
         return tagged_text
     
