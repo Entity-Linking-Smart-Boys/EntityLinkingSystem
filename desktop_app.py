@@ -14,7 +14,7 @@ class MyFrame(wx.Frame):
         EL.ner()
         EL.save_html("siem.html")
 
-        path_to_file = "E:\Pulpit\Studia\Inzynierka\EntityLinkingSystem\siem.html"
+        path_to_file = "siem.html"
 
         splitter = wx.SplitterWindow(self)
         leftPannel = wx.Panel(splitter)
