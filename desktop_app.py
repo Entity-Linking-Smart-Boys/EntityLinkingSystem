@@ -41,7 +41,6 @@ class MyFrame(wx.Frame):
         '''System creation'''
 
 
-
         splitter = wx.SplitterWindow(self)
         leftPannel = wx.Panel(splitter)
         rightPannel = wx.Panel(splitter)
