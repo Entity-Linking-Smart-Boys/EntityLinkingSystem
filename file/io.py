@@ -33,7 +33,7 @@ class FileIO:
         file = open(textPath, encoding="utf-8")
         json_file = file.read()
         file.close()
-        text = json.loads(jsonpickle.decode(json_file))
+        text =  jsonpickle.decode(json.loads(json_file))
         return text
     
     
