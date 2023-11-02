@@ -4,6 +4,7 @@ from entity_linking_system import EntityLinkingSystem
 import wx
 import wx.html2 as html2
 import ntpath
+from htmldom import htmldom
 
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kw):
@@ -26,6 +27,15 @@ class MyFrame(wx.Frame):
 
         self.nedAlgorithms = ['four', 'five', 'six']
         '''NED Algorithms'''
+
+        tfile = open(f"./file/template.xhtml", mode= "r" , encoding="utf-8")
+        template = tfile.read()
+        tfile.close()
+        self.dom = htmldom.HtmlDom().createDom(template)
+        '''Template'''
+
+        self.html_content = None
+        '''HTML text'''
 
         self.EL = EntityLinkingSystem()
         '''System creation'''
@@ -54,6 +64,10 @@ class MyFrame(wx.Frame):
         self.buttonStart = wx.Button(leftPannel, label="start", pos = (50, 200))
         self.buttonStart.Bind(wx.EVT_BUTTON, self.on_start)
 
+        '''Save button'''
+        self.buttonSave = wx.Button(leftPannel, label="save html", pos = (200, 200))
+        self.buttonSave.Bind(wx.EVT_BUTTON, self.on_save)
+
         #--------------MANAGING RIGHT PANEL--------------#
         '''load html content'''
         self.browser = html2.WebView.New(rightPannel)
@@ -73,16 +87,31 @@ class MyFrame(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.on_close)
 
+    def on_save(self, e):
+        with wx.FileDialog(self, "Save HTML file", wildcard="HTML files (*.html)|*.html",
+                       style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return     # the user changed their mind
+
+            # save the current contents in the file
+            pathname = fileDialog.GetPath()
+            try:
+                with open(pathname, 'w', encoding="utf-8") as file:
+                    file.write(self.html_content)
+                    file.close()
+            except IOError:
+                wx.LogError("Cannot save current data in file '%s'." % pathname)
+            
+        
+
     def on_start(self, e):
         self.EL.select_ner(self.selectedNER)
         self.EL.select_ned(self.selectedNED)
         self.EL.load_text(self.path)
         fileName = ntpath.basename(self.path)
-        self.EL.save_html(fileName + '.html')
         self.EL.ner()
-        self.EL.save_html(fileName + '.html')
-        self.path += '.html'
-        self.load_html_content()#self.path)
+        self.display_html_content()
 
     def on_select_ner(self, event):
         # item = event.GetSelection() items id, we set it to 0 to default
@@ -94,16 +123,15 @@ class MyFrame(wx.Frame):
         item = 0
         self.selectedNED = item
 
-    def load_html_content(self):#, file_path):
-        with open(self.path, "r", encoding="utf-8") as file:
-            html_content = file.read()
-        self.browser.SetPage(html_content, "")
+    def display_html_content(self):#, file_path):
+        self.dom.find("div[id=content]").text(self.EL.text.get_html_text())
+        self.html_content = "<!DOCTYPE html>"+self.dom.referenceToRootElement.html() # = file.read()
+        self.browser.SetPage(self.html_content, "")
 
 
     #--------------ON CLICK EVENT--------------#
     def on_click(self, e):
-
-        self.load_html_content()
+        self.display_html_content()
 
 
     #--------------FILE EXPLORER--------------#
@@ -143,7 +171,6 @@ class MyFrame(wx.Frame):
         # self.path += '.html'
 
         # self.load_html_content()#self.path)
-
 
     def on_close(self, event):
         self.Destroy()
