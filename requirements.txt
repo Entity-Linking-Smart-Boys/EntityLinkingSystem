@@ -3,3 +3,4 @@ spacy == 3.7.2
 SPARQLWrapper == 2.0.0
 jsonpickle == 3.0.2
 htmldom == 2.0
+wxPython == 4.2.1
