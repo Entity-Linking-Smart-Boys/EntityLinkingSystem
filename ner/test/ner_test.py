@@ -39,7 +39,7 @@ def named_entity_recognition_using_spacy(text):
     :param text: text to annotate
     :return: found entities with specific surface form and label.
     """
-    nlp = spacy.load('en_core_web_lg')
+    nlp = spacy.load('en_core_web_lg') #trf
 
     doc = nlp(text)
 
