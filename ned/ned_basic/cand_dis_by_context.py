@@ -2,8 +2,6 @@
     Disambiguate candidates for each entity based on context similarity.
 """
 
-# TODO: add normalization of the final scores (from 0 - min score, to 1 - max score)
-
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
@@ -58,6 +56,8 @@ def disambiguate_by_context_sentence_and_abstract(entities):
                     candidate.cand_dis_by_context_score = similarity_score
                     candidate.cand_dis_current_score += similarity_score
 
+    normalize_final_context_scores(entities)
+
     return entities
 
 
@@ -77,3 +77,22 @@ def normalize_tfidf_vectors_magnitude(tfidf_matrix):
     # L2 normalization (Euclidean normalization) scales the vectors to have a unit length (magnitude of 1)
     tfidf_matrix_normalized = normalize(tfidf_matrix, norm='l2', axis=1)
     return tfidf_matrix_normalized
+
+
+def normalize_final_context_scores(entities):
+    """
+    Normalize context similarity scores for candidate entities.
+    This function rescales context similarity scores
+    within a list of entities and candidates to a range from 0 to 1.
+    """
+    # Calculate the minimum and maximum context similarity scores
+    min_score = min(candidate.cand_dis_by_context_score for entity in entities for candidate in entity.candidates)
+    max_score = max(candidate.cand_dis_by_context_score for entity in entities for candidate in entity.candidates)
+    # Normalize the context similarity scores
+    for entity in entities:
+        for candidate in entity.candidates:
+            candidate.cand_dis_by_context_score = (candidate.cand_dis_by_context_score - min_score) / (
+                        max_score - min_score)
+            candidate.cand_dis_current_score += candidate.cand_dis_by_context_score
+
+    return entities

@@ -18,41 +18,16 @@ def disambiguate_by_levenshtein_distance(entities):
     :return: Updated entities with candidates containing normalized Levenshtein distance-based similarity scores.
     """
 
-    # Initialize variables to find min and max scores
-    min_score = 0
-    max_score = 0
-
     for entity in entities:
         for candidate in entity.candidates:
             entity_label = entity.surface_form
             candidate_label = str(candidate.label).replace("_", " ")
             levenshtein_distance_score = calculate_levenshtein_distance_between_two_strings(entity_label,
                                                                                             candidate_label)
-            # Update min and max scores
-            min_score = min(min_score, levenshtein_distance_score)
-            max_score = max(max_score, levenshtein_distance_score)
-
             candidate.cand_dis_by_levenshtein_score = levenshtein_distance_score
 
-    entities = normalize_levenshtein_distance_scores(entities, max_score, min_score)
+    entities = normalize_final_levenshtein_scores(entities)
 
-    entities = update_current_candidates_scores(entities)
-
-    return entities
-
-
-def normalize_levenshtein_distance_scores(entities, max_score, min_score):
-    for entity in entities:
-        for candidate in entity.candidates:
-            candidate.cand_dis_by_levenshtein_score = (candidate.cand_dis_by_levenshtein_score - min_score) / (
-                    max_score - min_score)
-    return entities
-
-
-def update_current_candidates_scores(entities):
-    for entity in entities:
-        for candidate in entity.candidates:
-            candidate.cand_dis_current_score += candidate.cand_dis_by_levenshtein_score
     return entities
 
 
@@ -106,3 +81,22 @@ def calculate_levenshtein_distance_between_two_strings(entity_label, candidate_l
     similarity_score = 1 / (1 + levenshtein_distance_value)
 
     return similarity_score
+
+
+def normalize_final_levenshtein_scores(entities):
+    """
+    Normalize Levenshtein distance scores for candidate entities.
+    This function rescales Levenshtein distance scores
+    within a list of entities and candidates to a range from 0 to 1.
+    """
+    # Calculate the minimum and maximum levenshtein distance scores
+    min_score = min(candidate.cand_dis_by_levenshtein_score for entity in entities for candidate in entity.candidates)
+    max_score = max(candidate.cand_dis_by_levenshtein_score for entity in entities for candidate in entity.candidates)
+    # Normalize the context similarity scores
+    for entity in entities:
+        for candidate in entity.candidates:
+            candidate.cand_dis_by_levenshtein_score = (candidate.cand_dis_by_levenshtein_score - min_score) / (
+                        max_score - min_score)
+            candidate.cand_dis_current_score += candidate.cand_dis_by_levenshtein_score
+
+    return entities
