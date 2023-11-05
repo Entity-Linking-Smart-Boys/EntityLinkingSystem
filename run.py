@@ -9,7 +9,7 @@ if __name__ == "__main__":
     EL.select_ned(0)
 
 #    EL.load_text("siema.json")
-    EL.load_text("text1.txt")
+    EL.load_text("text_mj.txt")
 #   EL.load_text_string(text_str)
 
     EL.save_html("siem.html")
@@ -18,7 +18,8 @@ if __name__ == "__main__":
 
     EL.save_html("siem.html")
 
-    #EL.ned()
+    EL.ned()
+
     #EL.save_html("siem.html")
     
     #EL.save_text("siema.json")
