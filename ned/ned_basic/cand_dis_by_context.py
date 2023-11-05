@@ -16,12 +16,14 @@ def disambiguate_by_context_sentence_and_abstract(entities):
     :param entities: List of entities found in the text, each with associated candidates.
     :return: List of entities with candidates ranked from the most probable to least probable, based on context.
     """
-    # TODO: add normalization:
+    # TODO: add normalization of magnitude:
     #   Normalization is an optional step in the TF-IDF calculation,
     #   and it's often used to ensure that the vectors
     #   have a unit length (a magnitude of 1).
     #   Normalization can be achieved using various techniques,
     #   with the most common one being L2 normalization (also known as Euclidean normalization).
+
+    # TODO: add normalization of the final scores (from 0 - min score, to 1 - max score)
 
     # Create a dictionary to store the first sentence of each abstract by URI
     abstracts = {}
