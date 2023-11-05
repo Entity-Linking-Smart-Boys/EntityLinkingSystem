@@ -11,12 +11,16 @@ def disambiguate_by_levenshtein_distance(entities):
     - the candidate label of this entity (DBpedia label)
     This function calculates the Levenshtein distance-based similarity scores between
     the entity labels and candidate labels for each entity and its candidates.
-    The calculated similarity scores are stored in the candidates
+    The calculated similarity scores are normalized and stored in the candidates
     and returned as the updated entity list.
 
     :param entities: A list of entity objects with associated candidates.
-    :return: Updated entities with candidates containing Levenshtein distance-based similarity scores.
+    :return: Updated entities with candidates containing normalized Levenshtein distance-based similarity scores.
     """
+
+    # Initialize variables to find min and max scores
+    min_score = 0
+    max_score = 0
 
     for entity in entities:
         for candidate in entity.candidates:
@@ -24,9 +28,31 @@ def disambiguate_by_levenshtein_distance(entities):
             candidate_label = str(candidate.label).replace("_", " ")
             levenshtein_distance_score = calculate_levenshtein_distance_between_two_strings(entity_label,
                                                                                             candidate_label)
-            candidate.cand_dis_by_levenshtein_score = levenshtein_distance_score
-            candidate.cand_dis_current_score += levenshtein_distance_score
+            # Update min and max scores
+            min_score = min(min_score, levenshtein_distance_score)
+            max_score = max(max_score, levenshtein_distance_score)
 
+            candidate.cand_dis_by_levenshtein_score = levenshtein_distance_score
+
+    entities = normalize_levenshtein_distance_scores(entities, max_score, min_score)
+
+    entities = update_current_candidates_scores(entities)
+
+    return entities
+
+
+def normalize_levenshtein_distance_scores(entities, max_score, min_score):
+    for entity in entities:
+        for candidate in entity.candidates:
+            candidate.cand_dis_by_levenshtein_score = (candidate.cand_dis_by_levenshtein_score - min_score) / (
+                    max_score - min_score)
+    return entities
+
+
+def update_current_candidates_scores(entities):
+    for entity in entities:
+        for candidate in entity.candidates:
+            candidate.cand_dis_current_score += candidate.cand_dis_by_levenshtein_score
     return entities
 
 
@@ -46,8 +72,14 @@ def calculate_levenshtein_distance_between_two_strings(entity_label, candidate_l
     so the similarity score is inversely proportional to the Levenshtein distance.
     """
 
-    # Calculate Levenshtein distance
     def levenshtein_distance(s1, s2):
+        """
+        Calculate the Levenshtein distance between two strings.
+
+        :param s1: The first string.
+        :param s2: The second string.
+        :return: The Levenshtein distance between the two strings.
+        """
         if len(s1) < len(s2):
             return levenshtein_distance(s2, s1)
 
