@@ -54,7 +54,6 @@ def disambiguate_by_context_sentence_and_abstract(entities):
 
                     # Store the score in the candidate instance
                     candidate.cand_dis_by_context_score = similarity_score
-                    candidate.cand_dis_current_score += similarity_score
 
     normalize_final_context_scores(entities)
 
@@ -91,8 +90,8 @@ def normalize_final_context_scores(entities):
     # Normalize the context similarity scores
     for entity in entities:
         for candidate in entity.candidates:
-            candidate.cand_dis_by_context_score = (candidate.cand_dis_by_context_score - min_score) / (
-                        max_score - min_score)
-            candidate.cand_dis_current_score += candidate.cand_dis_by_context_score
+            normalized_score = round((candidate.cand_dis_by_context_score - min_score) / (max_score - min_score), 3)
+            candidate.cand_dis_by_context_score = normalized_score
+            candidate.cand_dis_current_score += normalized_score
 
     return entities

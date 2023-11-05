@@ -5,8 +5,9 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 import ssl
 from urllib.parse import quote
+import math
 
-
+# TODO: add docstrings
 def disambiguate_by_dbpedia_graph_connectivity(entities):
     for i, entity in enumerate(entities):
         closest_left_entity, closest_right_entity = find_two_closest_entities(entities, i)
@@ -29,6 +30,7 @@ def disambiguate_by_dbpedia_graph_connectivity(entities):
     entities = normalize_connectivity_in_dbpedia_scores(entities)
 
     return entities
+
 
 def find_two_closest_entities(entities, n):
     if n < 0 or n >= len(entities):
@@ -132,13 +134,15 @@ def normalize_connectivity_in_dbpedia_scores(entities):
             min_score = min(candidate.cand_dis_by_connectivity_score for candidate in entity.candidates)
             max_score = max(candidate.cand_dis_by_connectivity_score for candidate in entity.candidates)
             print(min_score, max_score)
-            # Normalize the scores for each candidate
+            # Normalize the scores for each candidate using a logarithmic transformation
             for candidate in entity.candidates:
                 if max_score == min_score:
                     normalized_similarity_score = 0  # All scores are the same
                 else:
-                    normalized_similarity_score = (candidate.cand_dis_by_connectivity_score - min_score) / (
-                            max_score - min_score)
+                    # Apply a logarithmic transformation
+                    normalized_similarity_score = round(
+                        math.log(candidate.cand_dis_by_connectivity_score - min_score + 1) / (
+                        math.log(max_score - min_score + 1)), 3)
                 candidate.cand_dis_by_connectivity_score = normalized_similarity_score
                 candidate.cand_dis_current_score += normalized_similarity_score
 

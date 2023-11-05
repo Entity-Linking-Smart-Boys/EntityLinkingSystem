@@ -95,8 +95,8 @@ def normalize_final_levenshtein_scores(entities):
     # Normalize the context similarity scores
     for entity in entities:
         for candidate in entity.candidates:
-            candidate.cand_dis_by_levenshtein_score = (candidate.cand_dis_by_levenshtein_score - min_score) / (
-                        max_score - min_score)
-            candidate.cand_dis_current_score += candidate.cand_dis_by_levenshtein_score
+            normalized_score = round((candidate.cand_dis_by_levenshtein_score - min_score) / (max_score - min_score), 3)
+            candidate.cand_dis_by_levenshtein_score = normalized_score
+            candidate.cand_dis_current_score += normalized_score
 
     return entities

@@ -84,9 +84,7 @@ def query_dbpedia(entity):
     }
 
     for ontology_type in dbpedia_ont_types:
-        # TODO: this query can be optimized in the future:
-        #   Firstly, get all entities from DBpedia that fit the given surface form
-        #   Then, filter the results based on the recognized NER type (filter using Python)
+
 
         query = '''
             PREFIX dbo: <http://dbpedia.org/ontology/>
