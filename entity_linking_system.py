@@ -11,6 +11,7 @@ from data.text import Text
 from ner.ner_spacy.ner_spacy import NERSpacy
 
 from ned.ned_basic.ned_basic import NEDBasic
+from ned.ned_popularity.ned_popularity import NEDPopularity
 
 
 class EntityLinkingSystem:
@@ -41,6 +42,8 @@ class EntityLinkingSystem:
         match ned_id:
             case 1:
                 self.NED = NEDBasic()
+            case 2:
+                self.NED = NEDPopularity()
             case _:
                 self.NED = NEDBasic()
         return

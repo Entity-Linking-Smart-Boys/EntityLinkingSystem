@@ -14,3 +14,5 @@ class Candidate:
     cand_dis_by_levenshtein_score = 0  # score from disambiguation by levenshtein distance
     cand_dis_by_connectivity_score = 0  # score from disambiguation by similarity_in_dbpedia_graph
     cand_dis_current_score = 0  # score updated after each disambiguation step
+
+    cand_dis_by_popularity_score = 0  # score from disambiguation by popularity_in_dbpedia_graph
