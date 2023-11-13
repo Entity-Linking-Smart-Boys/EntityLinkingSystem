@@ -58,9 +58,11 @@ class EntityLinkingSystem:
         self.text = self.IO.load_string(text_string)
 
     def ner(self):
+        self.text.clear_entities()
         self.NER.NER(self.text)
 
     def ned(self):
+        self.text.clear_candidates()
         self.NED.NED(self.text)
 
     def save_text(self, path):

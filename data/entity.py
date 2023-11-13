@@ -25,5 +25,9 @@ class Entity(object):
     def set_candidates(self, candidates):
         self.candidates = candidates
 
+    def set_uri_from_candidates(self):
+        if len(self.candidates) > 0:
+            self.uri = self.candidates[0].uri
+
     def to_html(self) -> str:
         return f"<span><a href=\"{self.uri}\">{self.surface_form}</a><sup>{self.ner_class} | {self.dbpedia_class}</sup></span>"

@@ -110,6 +110,7 @@ class MyFrame(wx.Frame):
         self.EL.load_text(self.path)
         fileName = ntpath.basename(self.path)
         self.EL.ner()
+        self.EL.ned()
         self.display_html_content()
 
     def on_select_ner(self, event):

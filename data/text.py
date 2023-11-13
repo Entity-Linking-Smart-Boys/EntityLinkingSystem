@@ -16,6 +16,13 @@ class Text(object):
     def set_entity_mentions(self, entities: [Entity]):
         self.entity_mentions = entities
 
+    def clear_entities(self):
+        self.entity_mentions.clear()
+
+    def clear_candidates(self):
+        for entity in self.entity_mentions:
+            entity.candidates.clear() 
+
     def get_entity_mentions(self):
         return self.entity_mentions
 
