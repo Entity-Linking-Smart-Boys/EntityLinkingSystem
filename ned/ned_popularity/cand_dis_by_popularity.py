@@ -8,6 +8,7 @@ This module provides methods for disambiguating candidate entities for each enti
 from SPARQLWrapper import SPARQLWrapper, JSON
 import ssl
 from urllib.parse import quote
+import math
 
 
 def disambiguate_by_dbpedia_graph_popularity(entities):
@@ -88,11 +89,11 @@ def normalize_popularity_in_dbpedia_scores(entities):
                 if max_score == min_score:
                     normalized_popularity_score = 0  # All scores are the same
                 else:
-                    # Linear normalization
-                    normalized_popularity_score = (candidate.cand_dis_by_popularity_score - min_score)/ (max_score - min_score)
-
+                    # Logarithmic normalization
+                    normalized_popularity_score = (math.log(candidate.cand_dis_by_popularity_score + 1) - math.log(
+                        min_score + 1)) / (math.log(max_score + 1) - math.log(min_score + 1))
                 # Update the candidate's normalized popularity score
                 candidate.cand_dis_by_popularity_score = round(normalized_popularity_score, 3)
-                candidate.cand_dis_current_score += normalized_popularity_score
+                candidate.cand_dis_current_score += round(normalized_popularity_score, 3)
 
     return entities

@@ -7,7 +7,7 @@ if __name__ == "__main__":
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 import ssl
-
+import time
 import sys
 
 sys.path.append('../.')
@@ -43,53 +43,89 @@ class NEDPopularity(NEDComponent):
 
 
 # CANDIDATE GENERATION BEGIN
-def query_dbpedia(entity):
+# CANDIDATE GENERATION BEGIN
+def query_dbpedia(entity, max_retries=3, retry_delay=2):
     """
-    Create SPARQL query and send it via SPARQLWrapper.
+    Create SPARQL query and send it via SPARQLWrapper with retry mechanism.
 
-    :param entity: entity containing details used during creation of query
+    :param entity: entity containing details used during the creation of the query
+    :param max_retries: maximum number of retry attempts
+    :param retry_delay: delay (in seconds) between retry attempts
     :return: query result
     """
 
     ssl._create_default_https_context = ssl._create_unverified_context  # set the SSL Certificate
 
-    sparql = SPARQLWrapper('https://dbpedia.org/sparql')  # initialize SPARQL Wrapper
+    for attempt in range(1, 4):  # 3 attempts
+        sparql = None  # Set to None before recreating
+        sparql = SPARQLWrapper('https://dbpedia.org/sparql')  # initialize SPARQL Wrapper
+        # Set the timeout to 3000 milliseconds
+        timeout = 45  # seconds
+        sparql.timeout = timeout * 1000  # milliseconds
 
+        try:
+            query_result = query_dbpedia_for_surfaceform(entity, sparql)
+            del sparql
+
+            if "results" in query_result and "bindings" in query_result["results"]:
+                if len(query_result["results"]["bindings"]) > 0:
+                    print("success")
+                    return query_result
+                else:
+                    print(f"No results found for the SPARQL query (attempt {attempt}/3). Retrying...")
+                    time.sleep(1)  # 1 second delay between retries
+
+            else:
+                print(f"Unexpected response format for the SPARQL query (attempt {attempt}/3). Retrying...")
+
+        except Exception as e:
+            print(f"Error executing SPARQL query (attempt {attempt}/3): {str(e)}")
+            time.sleep(1)  # 1 second delay between retries
+
+    print("Reached the maximum number of retries. Unable to execute SPARQL query.")
+    results_empty = {
+        "head": {
+            "link": [],
+            "vars": ["entity", "label", "linkCount"]
+        },
+        "results": {
+            "distinct": False,
+            "ordered": True,
+            "bindings": []
+        }
+    }
+    return results_empty
+
+
+def query_dbpedia_for_surfaceform(entity, sparql):
     # query the whole dbpedia (do not use NER type or ontology class)
     query = '''
-        PREFIX owl: <http://www.w3.org/2002/07/owl#>
-        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        PREFIX dc: <http://purl.org/dc/elements/1.1/>
-        PREFIX : <http://dbpedia.org/resource/>
-        PREFIX dbpedia2: <http://dbpedia.org/property/>
-        PREFIX dbpedia: <http://dbpedia.org/>
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+                    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+                    PREFIX dc: <http://purl.org/dc/elements/1.1/>
+                    PREFIX : <http://dbpedia.org/resource/>
+                    PREFIX dbpedia2: <http://dbpedia.org/property/>
+                    PREFIX dbpedia: <http://dbpedia.org/>
+                    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-        SELECT ?entity ?label (COUNT(?link) as ?linkCount) ?disambiguates
-        WHERE {
-          ?entity rdfs:label ?label 
-          OPTIONAL {
-            ?entity dbo:wikiPageDisambiguates ?disambiguates .
-          }
-          OPTIONAL {
-            ?entity dbo:wikiPageWikiLink ?link .
-          }
-          FILTER (langMatches(lang(?label), "en") && regex(?label, "''' + entity.surface_form + '''", "i"))
-
-        }
-    '''
-
-
+                    SELECT ?entity ?label (COUNT(?link) as ?linkCount) ?disambiguates
+                    WHERE {
+                      ?entity rdfs:label ?label 
+                      OPTIONAL {
+                        ?entity dbo:wikiPageDisambiguates ?disambiguates .
+                      }
+                      OPTIONAL {
+                        ?entity dbo:wikiPageWikiLink ?link .
+                      }
+                      FILTER (langMatches(lang(?label), "en") && regex(?label, "''' + entity.surface_form + '''", "i"))
+                    }
+                '''
     sparql.setQuery(query)
-
     sparql.setReturnFormat(JSON)
-
-    sparql.verify = False
     query_result = sparql.query().convert()
-
     return query_result
 
 
@@ -102,6 +138,13 @@ def save_found_candidates(query_results, entity):
     :param entity: entity in which the candidates are saved into
     :return: updated entity with a list of candidates
     """
+    if query_results is None:
+        # Handle the case where the query failed after retries
+        print("Error: SPARQL query failed. Unable to save candidates.")
+        return entity
+
+    # print("Query results:", query_results)  # Add this line for debugging
+
     entity.candidates = []
     for result in query_results["results"]["bindings"]:
         candidate_uri = result["entity"]["value"]
@@ -176,7 +219,7 @@ def print_disambiguated_entities(entities, top_n):
             print("Candidate label:", candidate.label)
             print("Candidate uri:", candidate.uri)
             print("Candidate Current Score:", candidate.cand_dis_current_score)
-            print("Candidate Popularity Score:", candidate.cand_dis_by_context_score)
+            print("Candidate Popularity Score:", candidate.cand_dis_by_popularity_score)
             print("Candidate Levenshtein Score:", candidate.cand_dis_by_levenshtein_score)
             print('\n')
         print('\n\n')
