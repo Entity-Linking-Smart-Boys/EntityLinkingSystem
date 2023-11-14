@@ -37,6 +37,9 @@ class NEDPopularity(NEDComponent):
 
         entities = disambiguate_candidates(self.entities)
 
+        for entity in entities:
+            entity.set_uri_from_candidates()
+
         text.set_entity_mentions(entities)
 
         return text
