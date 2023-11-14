@@ -23,4 +23,3 @@ if __name__ == "__main__":
     #EL.save_html("siem.html")
     
     #EL.save_text("siema.json")
-    pass
