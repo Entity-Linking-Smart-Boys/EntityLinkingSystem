@@ -6,7 +6,7 @@ if __name__ == "__main__":
 
     EL = EntityLinkingSystem()
     EL.select_ner(0)
-    EL.select_ned(0)
+    EL.select_ned(2)
 
 #    EL.load_text("siema.json")
     EL.load_text("text_mj.txt")
@@ -23,4 +23,3 @@ if __name__ == "__main__":
     #EL.save_html("siem.html")
     
     #EL.save_text("siema.json")
-    pass

@@ -35,7 +35,6 @@ class NEDBasic(NEDComponent):
             entity = save_found_candidates(query_result, entity)
             self.entities.append(entity)
 
-        # Disambiguate candidates
         entities = disambiguate_candidates(self.entities)
 
         for entity in entities:
