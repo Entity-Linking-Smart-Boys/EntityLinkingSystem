@@ -1,6 +1,6 @@
-from ned.ned_basic.cand_dis_by_levenshtein import disambiguate_by_levenshtein_distance
-from ned.ned_popularity.cand_dis_by_popularity import disambiguate_by_dbpedia_graph_popularity, \
-    normalize_popularity_in_dbpedia_scores
+from ned.ned_math.cand_dis_by_levenshtein import disambiguate_by_levenshtein_distance
+from ned.ned_graph.cand_dis_by_connectivity import disambiguate_by_dbpedia_graph_connectivity
+from ned.ned_graph.cand_dis_by_popularity import normalize_popularity_in_dbpedia_scores
 
 if __name__ == "__main__":
     pass
@@ -18,7 +18,7 @@ from data.entity import Entity
 from data.candidate import Candidate
 
 
-class NEDPopularity(NEDComponent):
+class NEDGraph(NEDComponent):
     """
     Named entity disambiguation component
     """
@@ -189,6 +189,9 @@ def disambiguate_candidates(entities):
     entities = sort_candidates_by_current_score(entities)
 
     entities = disambiguate_by_levenshtein_distance(entities)
+    entities = sort_candidates_by_current_score(entities)
+
+    entities = disambiguate_by_dbpedia_graph_connectivity(entities)
     entities = sort_candidates_by_current_score(entities)
 
     print_disambiguated_entities(entities, top_n=5)

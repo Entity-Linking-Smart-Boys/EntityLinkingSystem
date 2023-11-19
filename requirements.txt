@@ -5,3 +5,5 @@ jsonpickle == 3.0.2
 htmldom == 2.0
 wxPython == 4.2.1
 scikit-learn~=1.3.2
+
+requests~=2.31.0

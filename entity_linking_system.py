@@ -10,8 +10,9 @@ from data.text import Text
 
 from ner.ner_spacy.ner_spacy import NERSpacy
 
-from ned.ned_basic.ned_basic import NEDBasic
-from ned.ned_popularity.ned_popularity import NEDPopularity
+from ned.ned_math.ned_basic import NEDMath
+from ned.ned_graph.ned_popularity import NEDGraph
+from ned.ned_dbpedia_lookup.ned_dbpedia_lookup import NEDDBpediaLookup
 
 
 class EntityLinkingSystem:
@@ -41,11 +42,13 @@ class EntityLinkingSystem:
     def select_ned(self, ned_id):
         match ned_id:
             case 1:
-                self.NED = NEDBasic()
+                self.NED = NEDMath()
             case 2:
-                self.NED = NEDPopularity()
+                self.NED = NEDGraph()
+            case 3:
+                self.NED = NEDDBpediaLookup()
             case _:
-                self.NED = NEDBasic()
+                self.NED = NEDMath()
         return
 
     def load_text(self, path: str):
