@@ -33,13 +33,20 @@ class NEDDBpediaLookup(NEDComponent):
 
         return text
 
-    def query_dbpedia(self, entity, max_results=10):
+    def query_dbpedia(self, entity: Entity, max_results: int = 10):
         """
-        Docs: https://github.com/dbpedia/dbpedia-lookup
+        Query the DBpedia Lookup API to retrieve information about the given entity.
+        DBpedia Lookup documentation: https://github.com/dbpedia/dbpedia-lookup
+
+        Args:
+            entity (Entity): The entity for which to query information.
+            max_results (int): The maximum number of results to retrieve.
+
+        Returns:
+            dict: The JSON data containing information about the entity from DBpedia Lookup.
         """
         # DBpedia Lookup API endpoint
         api_url = "https://lookup.dbpedia.org/api/search"
-        # type_name = 'Location'
 
         # Parameters for the GET request
         params = {'query': entity.surface_form, 'format': 'json', 'maxResults': max_results}
@@ -57,7 +64,17 @@ class NEDDBpediaLookup(NEDComponent):
             print(f"Error: {response.status_code}")
             return None
 
-    def save_found_candidates(self, data, entity):
+    def save_found_candidates(self, data: dict, entity: Entity):
+        """
+        Save the found candidates for the entity based on the DBpedia Lookup results.
+
+        Args:
+            data (dict): The JSON data containing DBpedia Lookup results.
+            entity (Entity): The entity to associate with the candidates.
+
+        Returns:
+            Entity: The entity with added candidates.
+        """
         # Check if the "docs" key is present in the data
         if "docs" in data:
             # Loop through each result
@@ -68,22 +85,11 @@ class NEDDBpediaLookup(NEDComponent):
                 resource = doc.get("resource", [])[0] if doc.get("resource") else None
                 redirect_labels = doc.get("redirectlabel", [])
                 type_names = doc.get("typeName", [])
-                comment = doc.get("comment", [])[0].replace("<B>", "").replace("</B>", "") if doc.get("comment") else None
+                comment = doc.get("comment", [])[0].replace("<B>", "").replace("</B>", "") if doc.get(
+                    "comment") else None
                 label = doc.get("label", [])[0].replace("<B>", "").replace("</B>", "") if doc.get("label") else None
                 types = doc.get("type", [])
                 categories = doc.get("category", [])
-
-                # # Print or save the extracted information (replace with your desired logic)
-                # print(f"Score: {score}")
-                # print(f"RefCount: {ref_count}")
-                # print(f"Resource: {resource}")
-                # print(f"Redirect Labels: {redirect_labels}")
-                # print(f"Type Names: {type_names}")
-                # print(f"Comment: {comment}")
-                # print(f"Label: {label}")
-                # print(f"Types: {types}")
-                # print(f"Categories: {categories}")
-                # print("\n")
 
                 candidate = CandidateLookup(resource, label, type_names, comment, ref_count, lookup_score)
                 entity.candidates.append(candidate)
@@ -95,7 +101,6 @@ class NEDDBpediaLookup(NEDComponent):
         """
         Disambiguate candidates for each entity.
 
-        :param entities: list of entities found in the text and categorized into DBpedia ontology
         :return: entities with candidates ranked from the most probable to the least probable
         """
         self.entities = disambiguate_by_dbpedia_lookup_score(self.entities)
