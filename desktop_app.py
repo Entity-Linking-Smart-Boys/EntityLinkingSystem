@@ -41,6 +41,15 @@ class MyFrame(wx.Frame):
         '''System creation'''
 
 
+
+        self.nerAlgorithms = self.EL.get_ners()
+        '''NER Algorithms'''
+
+        self.nedAlgorithms = self.EL.get_neds()
+        '''NED Algorithms'''
+
+
+
         splitter = wx.SplitterWindow(self)
         leftPannel = wx.Panel(splitter)
         rightPannel = wx.Panel(splitter)
@@ -108,6 +117,7 @@ class MyFrame(wx.Frame):
         self.EL.select_ner(self.selectedNER)
         self.EL.select_ned(self.selectedNED)
         self.EL.load_text(self.path)
+        
         fileName = ntpath.basename(self.path)
         self.EL.ner()
         self.EL.ned()
@@ -147,7 +157,8 @@ class MyFrame(wx.Frame):
             self.path = fileDialog.GetPath()
             if self.path:
                 self.select_file()
-
+                self.EL.load_text(self.path)
+                self.display_html_content()
 
     def generate_text_name(self, text):
         splits = text.split(".")

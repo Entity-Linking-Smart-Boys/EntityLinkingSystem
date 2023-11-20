@@ -28,25 +28,31 @@ class EntityLinkingSystem:
         self.text: Text
         """Loaded Text"""
 
+        self._ners = { "Spacy": NERSpacy() }
+
+        self._neds = {
+            "Basic": NEDBasic(),
+            "Popularity": NEDPopularity()          
+            }
+
+
+
         self.IO = FileIO()
 
+    def get_neds(self):
+        return list(self._neds.keys())
+    def get_ners(self):
+        return list(self._ners.keys())
+
     def select_ner(self, ner_id):
-        match ner_id:
-            case 1:
-                self.NER = NERSpacy()
-            case _:
-                self.NER = NERSpacy()
-        return
+        self.NER  = list(self._ners.values())[ner_id]
+        return 
+
 
     def select_ned(self, ned_id):
-        match ned_id:
-            case 1:
-                self.NED = NEDBasic()
-            case 2:
-                self.NED = NEDPopularity()
-            case _:
-                self.NED = NEDBasic()
+        self.NED  = list(self._neds.values())[ned_id]
         return
+    
 
     def load_text(self, path: str):
         ext = os.path.splitext(path)[1]
