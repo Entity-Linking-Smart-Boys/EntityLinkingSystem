@@ -1,6 +1,5 @@
-from ned.ned_basic.cand_dis_by_connectivity import disambiguate_by_dbpedia_graph_connectivity
-from ned.ned_basic.cand_dis_by_context import disambiguate_by_context_sentence_and_abstract
-from ned.ned_basic.cand_dis_by_levenshtein import disambiguate_by_levenshtein_distance
+from ned.ned_math.cand_dis_by_context import disambiguate_by_context_sentence_and_abstract
+from ned.ned_math.cand_dis_by_levenshtein import disambiguate_by_levenshtein_distance
 
 if __name__ == "__main__":
     pass
@@ -13,13 +12,12 @@ import sys
 sys.path.append('../.')
 
 from ned.ned_component import NEDComponent
-from dbp.repository import DBpediaRepository
 from data.text import Text
 from data.entity import Entity
 from data.candidate import Candidate
 
 
-class NEDBasic(NEDComponent):
+class NEDMath(NEDComponent):
     """
     Named entity disambiguation component
     """
@@ -155,9 +153,6 @@ def disambiguate_candidates(entities):
     entities = sort_candidates_by_current_score(entities)
 
     entities = disambiguate_by_levenshtein_distance(entities)
-    entities = sort_candidates_by_current_score(entities)
-
-    entities = disambiguate_by_dbpedia_graph_connectivity(entities)
     entities = sort_candidates_by_current_score(entities)
 
     print_disambiguated_entities(entities, top_n=5)

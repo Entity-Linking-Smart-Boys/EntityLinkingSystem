@@ -10,8 +10,9 @@ from data.text import Text
 
 from ner.ner_spacy.ner_spacy import NERSpacy
 
-from ned.ned_basic.ned_basic import NEDBasic
-from ned.ned_popularity.ned_popularity import NEDPopularity
+from ned.ned_math.ned_basic import NEDMath
+from ned.ned_graph.ned_popularity import NEDGraph
+from ned.ned_dbpedia_lookup.ned_dbpedia_lookup import NEDDBpediaLookup
 
 
 class EntityLinkingSystem:
@@ -31,8 +32,9 @@ class EntityLinkingSystem:
         self._ners = { "Spacy": NERSpacy() }
 
         self._neds = {
-            "Basic": NEDBasic(),
-            "Popularity": NEDPopularity()          
+            "LookupNed": NEDDBpediaLookup(),
+            "Graph" : NEDGraph,
+            "Math" : NEDMath()          
             }
 
 
