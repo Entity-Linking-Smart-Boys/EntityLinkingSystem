@@ -8,6 +8,15 @@ class Entity(object):
     """
     Entity mention class
     """
+    def __init__(self):
+        self.surface_form: str 
+        self.ner_class: str 
+        self.position: (int, int) 
+        self.sentence_number 
+        self.sentence_text 
+        self.uri: str
+        self.dbpedia_class: str 
+        self.candidates: [Candidate] 
 
     def __init__(self, surface_form: str, ner_class: str, position: (int, int), sentence_number: int, sentence_text: str) -> None:
         self.surface_form: str = surface_form
