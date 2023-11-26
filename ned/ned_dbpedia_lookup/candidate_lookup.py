@@ -13,7 +13,7 @@ class CandidateLookup(Candidate):
 
     def __init__(self, uri, label, type_names, comment, ref_count, lookup_score):
         super().__init__(uri, label, type_names, comment)
-        self.ref_count = int(ref_count)
+        self.ref_count = int(ref_count if ref_count is not None else "0")
         self.lookup_score = float(lookup_score)
 
     cand_dis_current_score = 0  # score updated after each disambiguation step

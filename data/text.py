@@ -17,11 +17,14 @@ class Text(object):
         self.entity_mentions = entities
 
     def clear_entities(self):
-        self.entity_mentions.clear()
+        self.entity_mentions = []
 
     def clear_candidates(self):
         for entity in self.entity_mentions:
-            entity.candidates.clear() 
+            # if hasattr(entity,"candidates"):
+            #     entity.candidates.clear() 
+            # else:
+            entity.candidates = []
 
     def get_entity_mentions(self):
         return self.entity_mentions
@@ -57,6 +60,7 @@ class TestText(Text):
 
 
     def get_accurate_count(self):
+        """Get count of accurate enitites"""
         accurate_count = 0
         for entity in self.entity_mentions:
             entity : TestEntity
@@ -65,9 +69,11 @@ class TestText(Text):
         return accurate_count
         
     def get_entities_count(self):
+        """Get count of enitites"""
         return len(self.entity_mentions)
     
     def get_ned_accuracy(self):
+        """Get accuracy for this text"""
         return self.get_accurate_count()/self.get_entities_count()
 
     # def get_document_f_score(self):

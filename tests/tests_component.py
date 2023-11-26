@@ -17,8 +17,9 @@ class TestingComponent:
 
     def test_ned(self, NED:NEDComponent):
         """Run ned tests and calculate accuracies"""
-        for set in self.dataset:
-            NED.NED(set)
+        for text in self.dataset:
+            text.clear_candidates()
+            NED.NED(text)
         self.calculate_micro_and_macro_accuracy()
 
     def get_ned_micro_accuracy(self):
@@ -40,8 +41,8 @@ class TestingComponent:
         sum = 0
         for set in self.dataset:
             set: TestText
-            count += set.get_accurate_count()
-            accurate += set.get_entities_count()
+            count += set.get_entities_count()
+            accurate += set.get_accurate_count()
             sum += set.get_ned_accuracy()
         self.micro_acc = accurate/count    
         self.macro_acc = sum/len(self.dataset)
