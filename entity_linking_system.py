@@ -98,12 +98,12 @@ class EntityLinkingSystem:
     def ner(self):
         """Do NER on currently loaded text"""
         self.text.clear_entities()
-        self.NER.NER(self.text)
+        self.text = self.NER.NER(self.text)
 
     def ned(self):
         """Do NED on currently loaded text"""
         self.text.clear_candidates()
-        self.NED.NED(self.text)
+        self.text = self.NED.NED(self.text)
 
     def save_text(self, path):
         """Save currently loaded text to a json file"""

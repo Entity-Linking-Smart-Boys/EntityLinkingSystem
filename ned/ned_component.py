@@ -21,7 +21,7 @@ class NEDComponent(ABC):
     #     pass
 
     @abstractmethod
-    def NED(self, taggedText):
+    def NED(self, taggedText) -> Text:
         pass
 
     def sort_candidates_by_current_score(self):
