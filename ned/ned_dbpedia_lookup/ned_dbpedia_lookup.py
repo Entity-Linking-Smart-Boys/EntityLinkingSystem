@@ -20,6 +20,7 @@ class NEDDBpediaLookup(NEDComponent):
 
     def NED(self, text: Text):
         # Candidate generation
+        self.entities = []
         for entity in text.get_entity_mentions():
             query_result = self.query_dbpedia(entity)
             entity = self.save_found_candidates(query_result, entity)
