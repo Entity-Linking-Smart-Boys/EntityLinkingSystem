@@ -1,22 +1,26 @@
-import sys
+from dbp.repository import DBpediaRepository
+from ned.ned_graph.cand_dis_by_connectivity import disambiguate_by_dbpedia_graph_connectivity
+from ned.ned_graph.cand_dis_by_popularity import normalize_popularity_in_dbpedia_scores
 
-from .cand_dis_by_dbpedia_lookup_score import disambiguate_by_dbpedia_lookup_score
+if __name__ == "__main__":
+    pass
+
+import sys
 
 sys.path.append('../.')
 
 from ned.ned_component import NEDComponent
 from data.text import Text
 from data.entity import Entity
-from dbp.repository import DBpediaRepository
 
 
-class NEDDBpediaLookup(NEDComponent):
+class NEDGraph(NEDComponent):
     """
     Named entity disambiguation component
     """
 
     def __init__(self) -> None:
-        self.candidateType = "Lookup"
+        self.candidateType = "Graph"
 
     def NED(self, text: Text):
         self.generate_candidates(text)
@@ -56,10 +60,12 @@ class NEDDBpediaLookup(NEDComponent):
     def disambiguate_candidates(self):
         """
         Disambiguate candidates for each entity.
-
-        :return: entities with candidates ranked from the most probable to the least probable
         """
-        self.entities = disambiguate_by_dbpedia_lookup_score(self.entities)
+
+        self.entities = normalize_popularity_in_dbpedia_scores(self.entities)
+        self.sort_candidates_by_total_score()
+
+        self.entities = disambiguate_by_dbpedia_graph_connectivity(self.entities)
         self.sort_candidates_by_total_score()
 
         self.print_disambiguated_entities(top_n=5)

@@ -10,8 +10,8 @@ from data.text import Text
 
 from ner.ner_spacy.ner_spacy import NERSpacy
 
-from ned.ned_math.ned_basic import NEDMath
-from ned.ned_graph.ned_popularity import NEDGraph
+from ned.ned_math.ned_math import NEDMath
+from ned.ned_graph.ned_graph import NEDGraph
 from ned.ned_dbpedia_lookup.ned_dbpedia_lookup import NEDDBpediaLookup
 
 
@@ -29,32 +29,29 @@ class EntityLinkingSystem:
         self.text: Text
         """Loaded Text"""
 
-        self._ners = { "Spacy": NERSpacy() }
+        self._ners = {"Spacy": NERSpacy()}
 
         self._neds = {
             "LookupNed": NEDDBpediaLookup(),
-            "Graph" : NEDGraph,
-            "Math" : NEDMath()          
-            }
-
-
+            "Graph": NEDGraph(),
+            "Math": NEDMath()
+        }
 
         self.IO = FileIO()
 
     def get_neds(self):
         return list(self._neds.keys())
+
     def get_ners(self):
         return list(self._ners.keys())
 
     def select_ner(self, ner_id):
-        self.NER  = list(self._ners.values())[ner_id]
-        return 
-
+        self.NER = list(self._ners.values())[ner_id]
+        return
 
     def select_ned(self, ned_id):
-        self.NED  = list(self._neds.values())[ned_id]
+        self.NED = list(self._neds.values())[ned_id]
         return
-    
 
     def load_text(self, path: str):
         ext = os.path.splitext(path)[1]
@@ -74,7 +71,7 @@ class EntityLinkingSystem:
 
     def ned(self):
         self.text.clear_candidates()
-        self.NED.NED(self.text)
+        self.NED.NED(text=self.text)
 
     def save_text(self, path):
         self.IO.save_tagged(self.text, path)
