@@ -152,9 +152,10 @@ def query_side_entity(center_entity_candidate, side_entity_candidate, total_conn
         if bindings:
             count = int(bindings[0]["count"]["value"])
             total_connectivity_score += count
-            print("count:", count)
+            # print("count:", count)
         else:
-            print(f"No results found for the SPARQL query.")
+            pass
+            # print(f"No results found for the SPARQL query.")
     except Exception as e:
         print(f"Error executing SPARQL query: {str(e)}")
 
@@ -200,7 +201,7 @@ def normalize_connectivity_in_dbpedia_scores(entities):
             # Get the minimum and maximum connectivity scores in the entity
             min_score = min(candidate.cand_dis_by_connectivity_score for candidate in entity.candidates)
             max_score = max(candidate.cand_dis_by_connectivity_score for candidate in entity.candidates)
-            print(min_score, max_score)
+            # print(min_score, max_score)
             # Normalize the scores for each candidate using a logarithmic transformation
             for candidate in entity.candidates:
                 if max_score == min_score:

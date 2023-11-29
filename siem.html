@@ -12,9 +12,49 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         </meta>
         <style>
-            a {color: red;}
+            /* a {color: red;}
             sup {color: green; display:none;}
-            span a:hover + sup {color:green;display: inline;}
+            span a:hover + sup {color:green;display: inline;} */
+            body {
+                background-color: #202020;
+                color: gainsboro;
+                font-size: large;
+                font-family: "Open Sans";
+            }
+            #content {
+                margin-left: 5%;
+                margin-right: 5%;
+                
+            }
+            span {
+                position: relative;
+            }
+            a {
+                color: red;
+                position: relative;
+                display: inline-block;
+                border-bottom: 1px dotted black;
+            }
+            sup {
+                padding-right: auto;
+            }
+            span a + sup {
+                visibility: hidden;
+                width: 120px;
+                background-color: #424242;
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px 0;
+                /* padding-right: 150px;*/
+                position: absolute;
+                left: 0px;
+                top: 20px;
+                z-index: 1;
+            }
+            span a:hover + sup {
+                visibility: visible;
+            }
         </style>
     </head>
     <body>
