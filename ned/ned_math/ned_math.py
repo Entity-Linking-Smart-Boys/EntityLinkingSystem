@@ -24,6 +24,7 @@ class NEDMath(NEDComponent):
         self.candidateType = "Math"
 
     def NED(self, text: Text):
+        self.entities = []
         self.generate_candidates(text)
 
         self.disambiguate_candidates()

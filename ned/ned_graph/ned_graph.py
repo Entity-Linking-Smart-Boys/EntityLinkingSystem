@@ -23,6 +23,7 @@ class NEDGraph(NEDComponent):
         self.candidateType = "Graph"
 
     def NED(self, text: Text):
+        self.entities = []
         self.generate_candidates(text)
 
         self.disambiguate_candidates()
