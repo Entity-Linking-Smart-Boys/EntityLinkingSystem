@@ -10,8 +10,8 @@ from data.text import Text
 
 from ner.ner_spacy.ner_spacy import NERSpacy
 
-from ned.ned_math.ned_basic import NEDMath
-from ned.ned_graph.ned_popularity import NEDGraph
+from ned.ned_math.ned_math import NEDMath
+from ned.ned_graph.ned_graph import NEDGraph
 from ned.ned_dbpedia_lookup.ned_dbpedia_lookup import NEDDBpediaLookup
 from tests.tests_component import TestingComponent
 
@@ -32,13 +32,14 @@ class EntityLinkingSystem:
         self.text: Text
         """Loaded Text"""
 
-        self._ners = { "Spacy": NERSpacy() }
+        self._ners = {"Spacy": NERSpacy()}
 
         self._neds = {
             "LookupNed": NEDDBpediaLookup(),
-            "Graph" : NEDGraph,
-            "Math" : NEDMath()          
-            }
+            "Graph": NEDGraph(),
+            "Math": NEDMath()
+        }
+        
         self.IO = FileIO()
 
     
@@ -55,12 +56,10 @@ class EntityLinkingSystem:
         self.NER  = list(self._ners.values())[ner_id]
         return 
 
-
     def select_ned(self, ned_id):
         """Change used ned algorithm"""
         self.NED  = list(self._neds.values())[ned_id]
         return
-    
 
     def load_text_string(self, text_string):
         """Load text into the system via string"""

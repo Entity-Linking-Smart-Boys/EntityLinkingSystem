@@ -18,57 +18,10 @@ def disambiguate_by_dbpedia_graph_popularity(entities):
     :param entities: List of entities found in the text, each with associated candidates.
     :return: List of entities with candidates ranked based on popularity in the DBpedia graph.
     """
-    for i, entity in enumerate(entities):
-        entity = calculate_popularity_for_entity_candidates(entity)
 
     entities = normalize_popularity_in_dbpedia_scores(entities)
 
     return entities
-
-
-def calculate_popularity_for_entity_candidates(entity):
-    """
-    Calculate the popularity score for all candidates of one entity.
-
-    :param entity: An entity object with associated candidates.
-    :return: The updated entity object with popularity scores for each candidate.
-    """
-    # Set up the SPARQL endpoint
-    ssl._create_default_https_context = ssl._create_unverified_context  # set the SSL Certificate
-    sparql = SPARQLWrapper('https://dbpedia.org/sparql')  # initialize SPARQL Wrapper
-
-    for cand in entity.candidates:
-        candidate_label = quote(str(cand.label).replace(' ', '_'))
-
-        query = """
-            PREFIX dbo: <http://dbpedia.org/ontology/>
-            PREFIX dbr: <http://dbpedia.org/resource/>
-
-            SELECT (COUNT(?link) as ?linkCount)
-            WHERE {
-              dbr:""" + candidate_label + """ dbo:wikiPageWikiLink ?link.
-            }
-        """
-        # print(query)
-
-        sparql.setQuery(query)
-        sparql.setReturnFormat(JSON)
-
-        try:
-            # Execute the query
-            results = sparql.query().convert()
-            # Check if there are results
-            if "results" in results and "bindings" in results["results"]:
-                if results["results"]["bindings"]:
-                    link_count = int(results["results"]["bindings"][0]["linkCount"]["value"])
-                    cand.cand_dis_by_popularity_score = link_count
-                    print("count:" + str(link_count))
-                else:
-                    print(f"No results found for the SPARQL query for candidate {candidate_label}.")
-        except Exception as e:
-            print(f"Error executing SPARQL query: {str(e)}")
-
-    return entity
 
 
 def normalize_popularity_in_dbpedia_scores(entities):
@@ -81,8 +34,8 @@ def normalize_popularity_in_dbpedia_scores(entities):
     for entity in entities:
         if entity.candidates:
             # Get the minimum and maximum popularity scores in the entity
-            min_score = min(candidate.cand_dis_by_popularity_score for candidate in entity.candidates)
-            max_score = max(candidate.cand_dis_by_popularity_score for candidate in entity.candidates)
+            min_score = min(candidate.ref_count for candidate in entity.candidates)
+            max_score = max(candidate.ref_count for candidate in entity.candidates)
 
             # Normalize the scores for each candidate using linear normalization
             for candidate in entity.candidates:
@@ -90,10 +43,10 @@ def normalize_popularity_in_dbpedia_scores(entities):
                     normalized_popularity_score = 0  # All scores are the same
                 else:
                     # Logarithmic normalization
-                    normalized_popularity_score = (math.log(candidate.cand_dis_by_popularity_score + 1) - math.log(
+                    normalized_popularity_score = (math.log(candidate.ref_count + 1) - math.log(
                         min_score + 1)) / (math.log(max_score + 1) - math.log(min_score + 1))
                 # Update the candidate's normalized popularity score
                 candidate.cand_dis_by_popularity_score = round(normalized_popularity_score, 3)
-                candidate.cand_dis_current_score += round(normalized_popularity_score, 3)
+                candidate.cand_dis_total_score += round(normalized_popularity_score, 3)
 
     return entities

@@ -97,6 +97,6 @@ def normalize_final_levenshtein_scores(entities):
         for candidate in entity.candidates:
             normalized_score = round((candidate.cand_dis_by_levenshtein_score - min_score) / (max_score - min_score), 3)
             candidate.cand_dis_by_levenshtein_score = normalized_score
-            candidate.cand_dis_current_score += normalized_score
+            candidate.cand_dis_total_score += normalized_score
 
     return entities

@@ -24,10 +24,10 @@ class NEDComponent(ABC):
     def NED(self, taggedText) -> Text:
         pass
 
-    def sort_candidates_by_current_score(self):
+    def sort_candidates_by_total_score(self):
         for entity in self.entities:
             if entity.candidates:
-                entity.candidates.sort(key=lambda candidate: candidate.cand_dis_current_score, reverse=True)
+                entity.candidates.sort(key=lambda candidate: candidate.cand_dis_total_score, reverse=True)
 
     def print_disambiguated_entities(self, top_n):
         for entity in self.entities:
@@ -39,9 +39,36 @@ class NEDComponent(ABC):
                 # Print the candidate's partial score and similarity score
                 print("Candidate label:", candidate.label)
                 print("Candidate uri:", candidate.uri)
-                print("Candidate Current Score:", candidate.cand_dis_current_score)
-                print("Candidate Context Score:", candidate.cand_dis_by_context_score)
-                print("Candidate Levenshtein Score:", candidate.cand_dis_by_levenshtein_score)
-                print("Candidate Connectivity Score:", candidate.cand_dis_by_connectivity_score)
+                print("Candidate Total Score:", round(candidate.cand_dis_total_score, 3))  # 3 decimal points
+                if hasattr(candidate, 'cand_dis_by_lookup_score'):
+                    print("Candidate Lookup Score:", candidate.cand_dis_by_lookup_score)
+                if hasattr(candidate, 'cand_dis_by_context_score'):
+                    print("Candidate Context Score:", candidate.cand_dis_by_context_score)
+                if hasattr(candidate, 'cand_dis_by_levenshtein_score'):
+                    print("Candidate Levenshtein Score:", candidate.cand_dis_by_levenshtein_score)
+                if hasattr(candidate, 'cand_dis_by_connectivity_score'):
+                    print("Candidate Connectivity Score:", candidate.cand_dis_by_connectivity_score)
+                if hasattr(candidate, 'cand_dis_by_popularity_score'):
+                    print("Candidate Popularity Score:", candidate.cand_dis_by_popularity_score)
                 print('\n')
             print('\n\n')
+
+    def query_dbpedia(self, entity: Entity, max_results: int = 10):
+        """
+        Query the DBpedia Lookup API to retrieve information about the given entity.
+        DBpedia Lookup documentation: https://github.com/dbpedia/dbpedia-lookup
+
+        Args:
+            entity (Entity): The entity for which to query information.
+            max_results (int): The maximum number of results to retrieve.
+
+        Returns:
+            dict: The JSON data containing information about the entity from DBpedia Lookup.
+        """
+
+        dbrep = DBpediaRepository()
+
+        # Make the GET request
+        response = dbrep.get_candidates(entity, max_results)
+        return response
+
