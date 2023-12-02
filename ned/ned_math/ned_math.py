@@ -63,7 +63,6 @@ class NEDMath(NEDComponent):
         """
         Disambiguate candidates for each entity.
 
-        :param entities: list of entities found in the text and categorized into DBpedia ontology
         :return: entities with candidates ranked from the most probable to the least probable
         """
         self.entities = disambiguate_by_context_sentence_and_abstract(self.entities)

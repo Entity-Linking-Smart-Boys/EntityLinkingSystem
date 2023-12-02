@@ -6,33 +6,53 @@ from data.candidate_lookup import CandidateLookup
 from data.candidate_math import CandidateMath
 from data.entity import Entity
 
-if __name__ == "__main__":
-    pass
-
 
 class DBpediaRepository:
     """
     Repository for fetching candidates from DBpedia
     """
-    api_url = ""
+
+    api_url = "https://lookup.dbpedia.org/api/search"
 
     def __init__(self) -> None:
+        """
+        Initialize the DBpediaRepository instance with the default API URL.
+        """
         self.api_url = "https://lookup.dbpedia.org/api/search"
 
     def get_candidates(self, entity, max_results, candidateType="", params=None):
+        """
+        Get candidates for the specified entity from DBpedia.
+
+        Args:
+            entity (Entity): The entity for which to fetch candidates.
+            max_results (int): The maximum number of results to fetch.
+            candidateType (str): Type of candidate (one of the previously defined types).
+            params (dict): Additional parameters for the API request.
+
+        Returns:
+            Entity: The entity with added candidates.
+        """
         if params is None:
             params = {}
         params['query'] = entity.surface_form
-        # TODO: change format to JSON_FULL --> the abstract will be in the returned "comment" field (adjust saving
-        #  the abstract to the candidate, and other NED methods - no need to ge tthe abstract with an extra query)
-        params['format'] = 'json_full'
+        params['format'] = 'JSON_FULL'
         params['maxResults'] = max_results
 
-        result = self.search(params)
+        result = self.search_candidates_in_DBpedia(params)
         entity = self.save_found_candidates(result, entity, candidateType)
         return entity
 
-    def search(self, params):
+    def search_candidates_in_DBpedia(self, params):
+        """
+        Search for candidates in DBpedia using the specified parameters.
+
+        Args:
+            params (dict): Parameters for the DBpedia Lookup API request.
+
+        Returns:
+            dict: JSON data containing DBpedia Lookup results.
+        """
         # Make the GET request
         response = requests.get(self.api_url, params=params)
 
@@ -53,7 +73,7 @@ class DBpediaRepository:
         Args:
             data (dict): The JSON data containing DBpedia Lookup results.
             entity (Entity): The entity to associate with the candidates.
-            candidateType (str): type of candidate (one of previously defined)
+            candidateType (str): Type of candidate (one of previously defined)
 
         Returns:
             Entity: The entity with added candidates.
@@ -93,15 +113,21 @@ class DBpediaRepository:
     def normalize_lookup_scores_within_entity(self, entity):
         """
         Normalize DBpedia Lookup scores for candidate entities.
-        Linear normalization.
-        This function rescales DBpedia Lookup scores distance scores
-        within a list of entities and candidates to a range from 0 to 1.
+
+        This method performs linear normalization, rescaling DBpedia Lookup scores
+        (distance scores) within a list of entities and candidates to a range from 0 to 1.
+
+        Args:
+            entity (Entity): The entity whose candidates' scores need to be normalized.
+
+        Returns:
+            Entity: The entity with normalized candidate scores.
         """
-        # Calculate the minimum and maximum levenshtein distance scores for the current entity
+        # Calculate the minimum and maximum DBpedia Lookup scores for the current entity
         min_score = min(candidate.lookup_score for candidate in entity.candidates)
         max_score = max(candidate.lookup_score for candidate in entity.candidates)
 
-        # Normalize the context similarity scores within the current entity
+        # Normalize the DBpedia Lookup scores within the current entity
         for candidate in entity.candidates:
             if max_score != min_score:  # Avoid division by zero
                 normalized_score = round((candidate.lookup_score - min_score) / (max_score - min_score), 3)
@@ -109,3 +135,4 @@ class DBpediaRepository:
                 candidate.cand_dis_total_score += normalized_score
 
         return entity
+
