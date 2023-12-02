@@ -1,10 +1,7 @@
-from SPARQLWrapper import SPARQLWrapper, JSON
-import ssl
-from urllib.parse import quote
 import math
 import requests
-import requests
 from urllib.parse import quote
+import concurrent
 from concurrent.futures import ThreadPoolExecutor
 
 
@@ -19,23 +16,30 @@ def disambiguate_by_dbpedia_graph_connectivity(entities):
     :param entities: List of entities found in the text, each with associated candidates.
     :return: List of entities with candidates ranked based on connectivity in the DBpedia graph.
     """
-    for i, entity in enumerate(entities):
-        closest_left_entity, closest_right_entity = find_two_closest_entities(entities, i)
+    # Define a function to calculate connectivity for a single candidate
+    def process_candidate(candidate, left_entity_candidates, right_entity_candidates):
+        return calculate_connectivity_for_candidate(candidate, left_entity_candidates, right_entity_candidates)
 
-        # Get the top candidates for the centre entity, left entity, and right entity
-        top_candidates_count = 5
-        current_entity_candidates = entity.candidates[:top_candidates_count]
-        left_entity_candidates = closest_left_entity.candidates[:top_candidates_count] if closest_left_entity else []
-        right_entity_candidates = closest_right_entity.candidates[:top_candidates_count] if closest_right_entity else []
+    with ThreadPoolExecutor() as executor:
+        for i, entity in enumerate(entities):
+            closest_left_entity, closest_right_entity = find_two_closest_entities(entities, i)
 
-        # Calculate the connectivity in the DBpedia graph for the selected candidates
-        for candidate in current_entity_candidates:
-            # Calculate connectivity with candidates from the left entity and the right entity
-            candidate_total_connectivity_score = calculate_connectivity_for_candidate(candidate,
-                                                                                      left_entity_candidates,
-                                                                                      right_entity_candidates)
+            # Get the top candidates for the centre entity, left entity, and right entity
+            top_candidates_count = 5
+            current_entity_candidates = entity.candidates[:top_candidates_count]
+            left_entity_candidates = closest_left_entity.candidates[:top_candidates_count] if closest_left_entity else []
+            right_entity_candidates = closest_right_entity.candidates[:top_candidates_count] if closest_right_entity else []
 
-            candidate.cand_dis_by_connectivity_score = candidate_total_connectivity_score
+            # Use ThreadPoolExecutor to parallelize candidate processing
+            future_to_candidate = {executor.submit(process_candidate, candidate, left_entity_candidates, right_entity_candidates): candidate for candidate in current_entity_candidates}
+
+            for future in concurrent.futures.as_completed(future_to_candidate):
+                candidate = future_to_candidate[future]
+                try:
+                    candidate_total_connectivity_score = future.result()
+                    candidate.cand_dis_by_connectivity_score = candidate_total_connectivity_score
+                except Exception as e:
+                    print(f"Error processing candidate: {str(e)}")
 
     entities = normalize_connectivity_in_dbpedia_scores(entities)
 

@@ -54,14 +54,11 @@ def named_entity_recognition_using_spacy(text):
     :param text: text to annotate
     :return: found entities with specific surface form, label, and sentence number.
     """
-    nlp = spacy.load('en_core_web_lg') #trf
+    nlp = spacy.load('en_core_web_lg')
 
     doc = nlp(text)
 
     entities = [(e.text, e.label_, e.start_char, e.end_char, e.sent) for e in doc.ents]
-
-    # Use displacy to visualize the entities (optional)
-    displacy.render(doc, style='ent')
 
     found_entities = []
     for entity in entities:
