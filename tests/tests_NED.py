@@ -78,7 +78,7 @@ class TestNEDRunUsingNERClass(unittest.TestCase):
         self.EL.save_html("test_text_saved.html")
 
 
-class TestNEDRunWithoutUsingNRCClass(unittest.TestCase):
+class TestNEDRunWithoutUsingNERClass(unittest.TestCase):
 
     def setUp(self):
         self.EL = EntityLinkingSystem()
