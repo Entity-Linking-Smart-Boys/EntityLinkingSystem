@@ -88,25 +88,24 @@ def map_entity_type_to_dbpedia_ontology(entity: Entity):
     :return:
     """
     spacy_to_dbpedia_ontology_mapping = {
-        "PERSON": "dbo:Species, dbo:Agent",  # People, including fictional.
-        "NORP": "dbo:Agent, dbo:Species",  # Nationalities or religious or political groups.
-        "FAC": "dbo:Building, dbo:ArchitecturalStructure, dbo:Infrastructure",
-        # Buildings, airports, highways, bridges, etc.
-        "ORG": "dbo:Agent",  # Companies, agencies, institutions, etc.
-        "GPE": "dbo:Place, dbo:Agent, dbo:Building",  # Countries, cities, states.
-        "LOC": "dbo:Place",  # Non-GPE locations, mountain ranges, bodies of water.
-        "PRODUCT": "dbo:MeanOfTransportation, dbo:Food, dbo:Device",  # Objects, vehicles, foods, etc. (Not services.)
-        "EVENT": "dbo:Event",  # Named hurricanes, battles, wars, sports events, etc.
-        "WORK_OF_ART": "dbo:Work",  # Titles of books, songs, etc.
-        "LAW": "dbo:Work",  # Named documents made into laws.
-        "LANGUAGE": "dbo:Language",  # Any named language.
+        "PERSON": "Agent",  # People, including fictional.
+        "NORP": "Agent, Species",  # Nationalities or religious or political groups.
+        "FAC": "Building, ArchitecturalStructure, Infrastructure", # Buildings, airports, highways, bridges, etc.
+        "ORG": "Agent",  # Companies, agencies, institutions, etc.
+        "GPE": "Place, Agent, Building",  # Countries, cities, states.
+        "LOC": "Place",  # Non-GPE locations, mountain ranges, bodies of water.
+        "PRODUCT": "MeanOfTransportation, Food, Device",  # Objects, vehicles, foods, etc. (Not services.)
+        "EVENT": "Event",  # Named hurricanes, battles, wars, sports events, etc.
+        "WORK_OF_ART": "Work",  # Titles of books, songs, etc.
+        "LAW": "Work",  # Named documents made into laws.
+        "LANGUAGE": "Language",  # Any named language.
         # DATE:       #  Absolute or relative dates or periods.
         # TIME:       # Times smaller than a day.
         # PERCENT:   #   Percentage, including ”%“.
         # MONEY:     #   Monetary values, including unit.
         # QUANTITY:  #   Measurements, as of weight or distance.
         # ORDINAL:   #   “first”, “second”, etc.
-        "CARDINAL": "dbo:TopicalConcept"  # Numerals that do not fall under another type.
+        "CARDINAL": "TopicalConcept"  # Numerals that do not fall under another type.
     }
 
     entity.dbpedia_class = spacy_to_dbpedia_ontology_mapping.get(entity.ner_class)

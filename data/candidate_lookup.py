@@ -11,5 +11,5 @@ class CandidateLookup(Candidate):
     Each candidate is assigned to specific entity (one-to-many).
     """
 
-    def __init__(self, uri, label, type_names, ref_count, lookup_score, comment):
-        super().__init__(uri, label, type_names, ref_count, lookup_score, comment)
+    def __init__(self, uri: str, label: str, type_names: [str], abstract: str, ref_count: int, lookup_score: float):
+        super().__init__(uri, label, type_names, abstract, ref_count, lookup_score)

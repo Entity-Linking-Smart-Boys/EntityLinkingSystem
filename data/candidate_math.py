@@ -11,8 +11,5 @@ class CandidateMath(Candidate):
     Each candidate is assigned to specific entity (one-to-many).
     """
 
-    def __init__(self, uri, label, ont_type, ref_count, lookup_score, comment):
-        super().__init__(uri, label, ont_type, ref_count, lookup_score, comment)
-        self.abstract = ""
-
-    abstract = ""
+    def __init__(self, uri: str, label: str, type_names: [str], abstract: str, ref_count: int, lookup_score: float):
+        super().__init__(uri, label, type_names, abstract, ref_count, lookup_score)

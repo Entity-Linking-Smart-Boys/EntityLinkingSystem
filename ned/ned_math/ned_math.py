@@ -38,7 +38,6 @@ class NEDMath(NEDComponent):
     def generate_candidates(self, text):
         for entity in text.get_entity_mentions():
             entity_with_candidates = self.query_dbpedia(entity)
-            entity_with_candidates = self.get_abstract_of_candidates(entity_with_candidates)
             self.entities.append(entity_with_candidates)
 
     def query_dbpedia(self, entity: Entity, max_results: int = 10):
@@ -59,45 +58,6 @@ class NEDMath(NEDComponent):
         # entity_with_candidates
         entity_with_candidates = dbrep.get_candidates(entity, max_results, self.candidateType)
         return entity_with_candidates
-
-    def get_abstract_of_candidates(self, entity_with_candidates):
-        for cand in entity_with_candidates.candidates:
-            abstract = self.get_abstract(cand.uri)
-            if abstract is None:
-                cand.abstract = cand.comment
-            else:
-                cand.abstract = abstract
-        return entity_with_candidates
-
-    def get_abstract(self, resource_uri):
-        # Define the DBpedia endpoint and construct the SPARQL query
-        dbpedia_endpoint = "http://dbpedia.org/sparql"
-        query_template = """
-            SELECT ?abstract
-            WHERE {{
-                <{resource_uri}> dbo:abstract ?abstract .
-                FILTER (langMatches(lang(?abstract), "en"))
-            }}
-        """
-        query = query_template.format(resource_uri=resource_uri)
-
-        # Send the SPARQL query to the DBpedia endpoint
-        headers = {'Accept': 'application/sparql-results+json'}
-        params = {'query': query, 'format': 'json'}
-        response = requests.get(dbpedia_endpoint, headers=headers, params=params)
-
-        # Parse the JSON response
-        results = response.json()
-        bindings = results['results']['bindings']
-
-        # Extract and print the abstract if available
-        if bindings:
-            abstract = bindings[0]['abstract']['value']
-            # print(f"Abstract for {resource_uri}:\n{abstract}")
-            return abstract
-        else:
-            # print(f"No abstract found for {resource_uri}")
-            return None
 
     def disambiguate_candidates(self):
         """

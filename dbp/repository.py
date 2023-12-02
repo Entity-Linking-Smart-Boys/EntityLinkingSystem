@@ -23,7 +23,9 @@ class DBpediaRepository:
         if params is None:
             params = {}
         params['query'] = entity.surface_form
-        params['format'] = 'json'
+        # TODO: change format to JSON_FULL --> the abstract will be in the returned "comment" field (adjust saving
+        #  the abstract to the candidate, and other NED methods - no need to ge tthe abstract with an extra query)
+        params['format'] = 'json_full'
         params['maxResults'] = max_results
 
         result = self.search(params)
@@ -62,25 +64,27 @@ class DBpediaRepository:
             for doc in data["docs"]:
                 # Extract information for specific fields
                 lookup_score = doc.get("score", [])[0] if doc.get("score") else None
-                ref_count = doc.get("refCount", [])[0] if doc.get("refCount") else None
-                resource = doc.get("resource", [])[0] if doc.get("resource") else None
-                redirect_labels = doc.get("redirectlabel", [])
-                type_names = doc.get("typeName", [])
-                comment = doc.get("comment", [])[0].replace("<B>", "").replace("</B>", "") if doc.get(
+                ref_count = doc.get("refCount", [])[0]["value"] if doc.get("refCount") else None
+                uri = doc.get("resource", [])[0]["value"] if doc.get("resource") else None
+                redirect_labels = [label["value"] for label in doc.get("redirectlabel", [])]
+                type_names = [type["value"] for type in doc.get("typeName", [])]
+                abstract = doc.get("comment", [])[0]["value"].replace("<B>", "").replace("</B>", "") if doc.get(
                     "comment") else None
-                label = doc.get("label", [])[0].replace("<B>", "").replace("</B>", "") if doc.get("label") else None
-                types = doc.get("type", [])
-                categories = doc.get("category", [])
+                label = doc.get("label", [])[0]["value"].replace("<B>", "").replace("</B>", "") if doc.get(
+                    "label") else None
+                types = [type["value"] for type in doc.get("type", [])]
+                categories = [category["value"] for category in doc.get("category", [])]
 
                 if candidateType == "Graph":
-                    candidate = CandidateGraph(resource, label, type_names, ref_count, lookup_score, comment)
+                    candidate = CandidateGraph(uri, label, type_names, abstract, ref_count, lookup_score)
                 elif candidateType == "Math":
-                    candidate = CandidateMath(resource, label, type_names, ref_count, lookup_score, comment)
+                    candidate = CandidateMath(uri, label, type_names, abstract, ref_count, lookup_score)
                 elif candidateType == "Lookup":
-                    candidate = CandidateLookup(resource, label, type_names, ref_count, lookup_score, comment)
+                    candidate = CandidateLookup(uri, label, type_names, abstract, ref_count, lookup_score)
                 else:
-                    candidate = Candidate(resource, label, type_names, ref_count, lookup_score, comment)
+                    candidate = Candidate(uri, label, type_names, abstract, ref_count, lookup_score)
                 entity.candidates.append(candidate)
+
             entity = self.normalize_lookup_scores_within_entity(entity)
         else:
             print("No 'docs' key found in the data.")

@@ -20,6 +20,8 @@ class NEDComponent(ABC):
     #     self.dbpedia :DBpediaRepository = DBpediaRepository() 
     #     pass
 
+    candidateType = "Lookup"
+
     @abstractmethod
     def NED(self, taggedText) -> Text:
         pass
