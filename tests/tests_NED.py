@@ -7,22 +7,23 @@ class TestNEDSelect(unittest.TestCase):
 
     def setUp(self):
         self.EL = EntityLinkingSystem()
+        self.use_NER_class = False
 
     def test_select_ned_Lookup(self):
         ned_id = 0
-        self.EL.select_ned(ned_id, use_NER_class=False)
+        self.EL.select_ned(ned_id, self.use_NER_class)
         selected_ned = self.EL.NED.candidateType
         self.assertEqual(selected_ned, "Lookup")
 
     def test_select_ned_Graph(self):
         ned_id = 1
-        self.EL.select_ned(ned_id, use_NER_class=False)
+        self.EL.select_ned(ned_id, self.use_NER_class)
         selected_ned = self.EL.NED.candidateType
         self.assertEqual(selected_ned, "Graph")
 
     def test_select_ned_Math(self):
         ned_id = 2
-        self.EL.select_ned(ned_id, use_NER_class=False)
+        self.EL.select_ned(ned_id, self.use_NER_class)
         selected_ned = self.EL.NED.candidateType
         self.assertEqual(selected_ned, "Math")
 
@@ -77,7 +78,7 @@ class TestNEDRunUsingNERClass(unittest.TestCase):
         self.EL.save_html("test_text_saved.html")
 
 
-class TestNEDRunWihtoutUsingNERClass(unittest.TestCase):
+class TestNEDRunWithoutUsingNRCClass(unittest.TestCase):
 
     def setUp(self):
         self.EL = EntityLinkingSystem()
