@@ -18,6 +18,7 @@ class NEDComponent(ABC):
 
     entities: [Entity] = []
     candidateType = "Lookup"
+    use_NER_class = False
 
     @abstractmethod
     def NED(self, taggedText) -> Text:
@@ -73,16 +74,33 @@ class NEDComponent(ABC):
     def query_dbpedia(self, entity: Entity, max_results: int = 10):
         """
         Query the DBpedia Lookup API to retrieve information about the given entity.
+        DBpedia Lookup documentation: https://github.com/dbpedia/dbpedia-lookup
 
         Args:
             entity (Entity): The entity for which to query information.
             max_results (int): The maximum number of results to retrieve.
 
         Returns:
-            dict: The JSON data containing information about the entity from DBpedia Lookup.
+            dict: The merged JSON data containing information about the entity from DBpedia Lookup.
         """
         dbrep = DBpediaRepository()
 
-        # Make the GET request
-        response = dbrep.get_candidates(entity, max_results)
-        return response
+        if self.use_NER_class:
+            results = []
+            for dbpedia_type in entity.dbpedia_class.split(','):  # Wrap the single string in a list
+                params = {}
+                params['typeName'] = dbpedia_type
+                params['typeNameRequired'] = 'true'
+                # returns entity with a list of candidates
+                response_entity = dbrep.get_candidates(entity, max_results, self.candidateType, params)
+                results.append(response_entity)
+
+            # Merge entities with a list of candidates and save it as one entity
+            main_entity = results[0]
+            for single_entity in results[1:]:
+                main_entity.candidates += single_entity.candidates
+            return main_entity
+
+        else:
+            response_entity = dbrep.get_candidates(entity, max_results, self.candidateType)
+            return response_entity

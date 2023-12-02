@@ -1,7 +1,3 @@
-"""
-
-"""
-
 from SPARQLWrapper import SPARQLWrapper, JSON
 import ssl
 from urllib.parse import quote
@@ -99,13 +95,16 @@ def calculate_connectivity_for_candidate(center_entity_candidate, left_entity_ca
     :param right_entity_candidates: List of right-side entity candidates.
     :return: Total connectivity score.
     """
-    # Initialize the total connectivity score
-    total_connectivity_score = 0
 
-    connectivity_score_with_right_candidates = query_side_entities_parallel(center_entity_candidate,
-                                                                            left_entity_candidates)
-    connectivity_score_with_left_candidates = query_side_entities_parallel(center_entity_candidate,
-                                                                           right_entity_candidates)
+    if len(left_entity_candidates) > 0:
+        connectivity_score_with_left_candidates = query_side_entities_parallel(center_entity_candidate, left_entity_candidates)
+    else:
+        connectivity_score_with_left_candidates = 0
+
+    if len(right_entity_candidates) > 0:
+        connectivity_score_with_right_candidates = query_side_entities_parallel(center_entity_candidate, right_entity_candidates)
+    else:
+        connectivity_score_with_right_candidates = 0
 
     total_connectivity_score = connectivity_score_with_right_candidates + connectivity_score_with_left_candidates
 
@@ -114,29 +113,28 @@ def calculate_connectivity_for_candidate(center_entity_candidate, left_entity_ca
 
 def query_side_entity(center_entity_candidate, side_entity_candidate, total_connectivity_score):
     """
-        Query DBpedia for connectivity between a central entity and a side entity.
+    Query DBpedia for connectivity between a central entity and a side entity.
 
-        This function constructs a SPARQL query and sends it to DBpedia to find connectivity
-        between a central entity and a side entity.
+    This function constructs a SPARQL query and sends it to DBpedia to find connectivity
+    between a central entity and a side entity.
 
-        :param center_entity_candidate: Central entity candidate.
-        :param side_entity_candidate: Side entity candidate.
-        :param total_connectivity_score: Total connectivity score.
-        :return: Updated total connectivity score.
+    :param center_entity_candidate: Central entity candidate.
+    :param side_entity_candidate: Side entity candidate.
+    :param total_connectivity_score: Total connectivity score.
+    :return: Updated total connectivity score.
     """
-    center_entity_label = quote(str(center_entity_candidate.label).replace(' ', '_'))
-    side_entity_label = quote(str(side_entity_candidate.label).replace(' ', '_'))
+    center_entity_uri = quote(str(center_entity_candidate.uri))
+    side_entity_uri = quote(str(side_entity_candidate.uri))
 
     dbpedia_endpoint = "http://dbpedia.org/sparql"
     query = """
         PREFIX dbo: <http://dbpedia.org/ontology/> 
-        PREFIX dbr: <http://dbpedia.org/resource/> 
 
         SELECT ?connection (count(?connection) as ?count) 
 
         WHERE { 
-          dbr:""" + center_entity_label + """ ?connection ?x . 
-          ?x ?y dbr:""" + side_entity_label + """ . 
+          <""" + center_entity_uri + """> ?connection ?x . 
+          ?x ?y <""" + side_entity_uri + """> . 
           FILTER (?connection = dbo:wikiPageWikiLink) 
         } 
     """
@@ -145,10 +143,12 @@ def query_side_entity(center_entity_candidate, side_entity_candidate, total_conn
     params = {'query': query, 'format': 'json'}
     response = requests.get(dbpedia_endpoint, headers=headers, params=params)
 
-    results = response.json()
-    bindings = results['results']['bindings']
-
     try:
+        # Check if the response contains data
+        response.raise_for_status()
+        results = response.json()
+        bindings = results['results']['bindings']
+
         if bindings:
             count = int(bindings[0]["count"]["value"])
             total_connectivity_score += count
@@ -156,8 +156,14 @@ def query_side_entity(center_entity_candidate, side_entity_candidate, total_conn
         else:
             pass
             # print(f"No results found for the SPARQL query.")
-    except Exception as e:
-        print(f"Error executing SPARQL query: {str(e)}")
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"Request Exception: {err}")
 
     return total_connectivity_score
 
@@ -176,7 +182,9 @@ def query_side_entities_parallel(center_entity_candidate, side_entity_candidates
     total_connectivity_score = 0
 
     with ThreadPoolExecutor() as executor:
-        futures = [executor.submit(query_side_entity, center_entity_candidate, side_entity_candidate, total_connectivity_score) for side_entity_candidate in side_entity_candidates]
+        futures = [
+            executor.submit(query_side_entity, center_entity_candidate, side_entity_candidate, total_connectivity_score)
+            for side_entity_candidate in side_entity_candidates]
 
         # Wait for all threads to complete
         for future in futures:

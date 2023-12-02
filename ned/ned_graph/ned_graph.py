@@ -39,25 +39,6 @@ class NEDGraph(NEDComponent):
             entity = self.query_dbpedia(entity)
             self.entities.append(entity)
 
-    def query_dbpedia(self, entity: Entity, max_results: int = 10):
-        """
-        Query the DBpedia Lookup API to retrieve information about the given entity.
-        DBpedia Lookup documentation: https://github.com/dbpedia/dbpedia-lookup
-
-        Args:
-            entity (Entity): The entity for which to query information.
-            max_results (int): The maximum number of results to retrieve.
-
-        Returns:
-            dict: The JSON data containing information about the entity from DBpedia Lookup.
-        """
-
-        dbrep = DBpediaRepository()
-
-        # Make the GET request
-        response = dbrep.get_candidates(entity, max_results, self.candidateType)
-        return response
-
     def disambiguate_candidates(self):
         """
         Disambiguate candidates for each entity.

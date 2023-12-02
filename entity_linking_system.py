@@ -56,9 +56,10 @@ class EntityLinkingSystem:
         self.NER  = list(self._ners.values())[ner_id]
         return 
 
-    def select_ned(self, ned_id):
+    def select_ned(self, ned_id, use_NER_class):
         """Change used ned algorithm"""
         self.NED  = list(self._neds.values())[ned_id]
+        self.NED.use_NER_class = use_NER_class
         return
 
     def load_text_string(self, text_string):
