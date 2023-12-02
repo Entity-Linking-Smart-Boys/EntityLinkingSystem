@@ -6,7 +6,6 @@ from entity_linking_system import EntityLinkingSystem
 class TestNEDSelect(unittest.TestCase):
 
     def setUp(self):
-        # Initialize your EntityLinkingSystem instance here if needed
         self.EL = EntityLinkingSystem()
 
     def test_select_ned_Lookup(self):
@@ -31,7 +30,6 @@ class TestNEDSelect(unittest.TestCase):
 class TestNEDRun(unittest.TestCase):
 
     def setUp(self):
-        # Initialize your EntityLinkingSystem instance here if needed
         self.EL = EntityLinkingSystem()
         self.test_text = "test_text.txt"
 

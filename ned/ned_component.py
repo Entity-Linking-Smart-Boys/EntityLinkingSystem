@@ -13,32 +13,47 @@ from data.entity import Entity
 
 class NEDComponent(ABC):
     """
-    Named entity disambiguation component
+    Named entity disambiguation component.
     """
-    entities: [Entity] = []
-    # def __init__(self) -> None:
-    #     self.dbpedia :DBpediaRepository = DBpediaRepository() 
-    #     pass
 
+    entities: [Entity] = []
     candidateType = "Lookup"
 
     @abstractmethod
     def NED(self, taggedText) -> Text:
+        """
+        Perform Named Entity Disambiguation (NED) on the given tagged text.
+
+        Args:
+            taggedText (Text): The tagged text with identified entities.
+
+        Returns:
+            Text: The disambiguated text.
+        """
         pass
 
     def sort_candidates_by_total_score(self):
+        """
+        Sort candidates for each entity by their total disambiguation score in descending order.
+        """
         for entity in self.entities:
             if entity.candidates:
                 entity.candidates.sort(key=lambda candidate: candidate.cand_dis_total_score, reverse=True)
 
     def print_disambiguated_entities(self, top_n):
+        """
+        Print disambiguated entities and their top candidates with scores.
+
+        Args:
+            top_n (int): The number of top candidates to display.
+        """
         for entity in self.entities:
             # Print the entity label
             print("Entity Label:", entity.surface_form)
 
-            # Iterate through the candidates for the current entity
+            # Iterate through the top candidates for the current entity
             for candidate in entity.candidates[:top_n]:
-                # Print the candidate's partial score and similarity score
+                # Print candidate information
                 print("Candidate label:", candidate.label)
                 print("Candidate uri:", candidate.uri)
                 print("Candidate Total Score:", round(candidate.cand_dis_total_score, 3))  # 3 decimal points
@@ -58,7 +73,6 @@ class NEDComponent(ABC):
     def query_dbpedia(self, entity: Entity, max_results: int = 10):
         """
         Query the DBpedia Lookup API to retrieve information about the given entity.
-        DBpedia Lookup documentation: https://github.com/dbpedia/dbpedia-lookup
 
         Args:
             entity (Entity): The entity for which to query information.
@@ -67,10 +81,8 @@ class NEDComponent(ABC):
         Returns:
             dict: The JSON data containing information about the entity from DBpedia Lookup.
         """
-
         dbrep = DBpediaRepository()
 
         # Make the GET request
         response = dbrep.get_candidates(entity, max_results)
         return response
-
