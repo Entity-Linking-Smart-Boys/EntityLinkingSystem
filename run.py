@@ -8,13 +8,16 @@ if __name__ == "__main__":
     EL.select_ner(0)
     EL.select_ned(ned_id=0, use_NER_class=False)
 
-    EL.load_dataset("D:\\Informatyka\\Inzynierka\\Github\\PROCESSEDDATASETS\\aida_test.json")
-    
+    #EL.load_dataset("test_datasets/aida_test.json")
+    EL.load_dataset("test_datasets/ace2004_test.json")
+
     #EL.text = EL.test.get_text(0)
     #EL.ned()
     
     EL.ned_tests()
     print(EL.get_accuracy())
+
+
     # EL.load_text("siema.json")
 
 #     EL.load_text("text_mj.txt")

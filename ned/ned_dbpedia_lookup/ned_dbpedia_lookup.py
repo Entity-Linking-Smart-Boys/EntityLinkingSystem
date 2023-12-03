@@ -44,4 +44,4 @@ class NEDDBpediaLookup(NEDComponent):
         self.entities = disambiguate_by_dbpedia_lookup_score(self.entities)
         self.sort_candidates_by_total_score()
 
-        self.print_disambiguated_entities(top_n=5)
+        self.print_disambiguated_entities(top_n=1)
