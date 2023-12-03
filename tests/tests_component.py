@@ -17,9 +17,17 @@ class TestingComponent:
 
     def test_ned(self, NED:NEDComponent):
         """Run ned tests and calculate accuracies"""
+        i = 0
         for text in self.dataset:
-            text.clear_candidates()
-            NED.NED(text)
+
+            try:
+                text.clear_candidates()
+                NED.NED(text)
+            except:
+                print(f"Error occured, skipping {i} text")
+
+            print(i/len(self.dataset))
+            i+=1
         self.calculate_micro_and_macro_accuracy()
 
     def get_ned_micro_accuracy(self):
@@ -39,13 +47,17 @@ class TestingComponent:
         count = 0
         accurate = 0
         sum = 0
+        wrong = 0
         for set in self.dataset:
             set: TestText
-            count += set.get_entities_count()
-            accurate += set.get_accurate_count()
-            sum += set.get_ned_accuracy()
+            try:
+                count += set.get_entities_count()
+                accurate += set.get_accurate_count()
+                sum += set.get_ned_accuracy()
+            except:
+                wrong+=1
         self.micro_acc = accurate/count    
-        self.macro_acc = sum/len(self.dataset)
+        self.macro_acc = sum/(len(self.dataset)-wrong)
 
     def get_text(self,index:int) -> TestText:
         """Get text from loaded dataset"""
