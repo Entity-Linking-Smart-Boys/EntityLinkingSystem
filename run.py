@@ -1,12 +1,12 @@
 from entity_linking_system import EntityLinkingSystem
-
+from tests.tests_component import TestingComponent
 
 if __name__ == "__main__":
 #     text_str = "Nikola Tesla (Serbian Cyrillic: Никола Тесла) was a Serbian-American inventor, electrical engineer, mechanical engineer, and futurist best known for his contributions to the design of the modern alternating current (AC) electricity supply system."
 
     EL = EntityLinkingSystem()
     EL.select_ner(0)
-    EL.select_ned(0)
+    EL.select_ned(ned_id=0, use_NER_class=False)
 
     EL.load_dataset("D:\\Informatyka\\Inzynierka\\Github\\PROCESSEDDATASETS\\aida_test.json")
     
@@ -29,6 +29,6 @@ if __name__ == "__main__":
 #     EL.ned()
 
     #EL.save_html("siem.html")
-    
+
     #EL.save_text("siema.json")
     pass

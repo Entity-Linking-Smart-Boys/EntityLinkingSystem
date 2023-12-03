@@ -4,15 +4,12 @@ class Candidate:
     Each candidate is assigned to specific entity (one-to-many).
     """
 
-    def __init__(self, uri, label, ont_type, abstract=""):
+    def __init__(self, uri: str, label: str, type_names: [str], abstract: str, ref_count: int, lookup_score: float):
         self.uri = uri  # from DBpedia - link to the page with details
         self.label = label  # from DBpedia - rdfs:label value
-        self.ont_type = ont_type  # from DBpedia - ontology type
-        self.abstract = abstract  # from DBpedia - entity abstract (optional)
-
-    cand_dis_by_context_score = 0  # score from disambiguation by context
-    cand_dis_by_levenshtein_score = 0  # score from disambiguation by levenshtein distance
-    cand_dis_by_connectivity_score = 0  # score from disambiguation by similarity_in_dbpedia_graph
-    cand_dis_current_score = 0  # score updated after each disambiguation step
-
-    cand_dis_by_popularity_score = 0  # score from disambiguation by popularity_in_dbpedia_graph
+        self.ont_type = type_names  # from DBpedia - ontology type
+        self.ref_count = int(ref_count if ref_count is not None else 0)
+        self.lookup_score = float(lookup_score)
+        self.abstract = str(abstract)
+        self.cand_dis_total_score = 0
+        self.cand_dis_by_lookup_score = 0
