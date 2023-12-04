@@ -67,9 +67,9 @@ def named_entity_recognition_using_spacy(text):
         start_char = entity[2]
         end_char = entity[3]
         entity_position = (start_char, end_char)
-        sentence_number = list(doc.sents).index(entity[4])
-        sentence_text = str(entity[4])
-        new_entity = Entity(surface_form, ner_class, entity_position, sentence_number, sentence_text)
+        # sentence_number = list(doc.sents).index(entity[4])
+        # sentence_text = str(entity[4])
+        new_entity = Entity(surface_form, ner_class, entity_position)
 
         found_entities.append(new_entity)
 

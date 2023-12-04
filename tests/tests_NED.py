@@ -128,5 +128,46 @@ class TestNEDRunWithoutUsingNERClass(unittest.TestCase):
         self.EL.save_html("test_text_saved.html")
 
 
+class TestNEDAccuracyUsingNERClass(unittest.TestCase):
+
+    def setUp(self):
+        self.EL = EntityLinkingSystem()
+        self.test_text = "test_text.txt"
+        self.test_dataset = "../test_datasets/ace2004_test.json"
+        self.use_NER_class = False
+
+    def test_run_ned_Lookup(self):
+        ner_id = 0  # Spacy
+        ned_id = 0  # Lookup
+
+        self.EL.select_ner(ner_id)
+        self.EL.select_ned(ned_id, self.use_NER_class)
+
+        self.EL.load_dataset(self.test_dataset)
+        self.EL.ned_tests()
+        print(self.EL.get_accuracy())
+
+    def test_run_ned_Graph(self):
+        ner_id = 0  # Spacy
+        ned_id = 1  # Graph
+        self.EL.select_ner(ner_id)
+        self.EL.select_ned(ned_id, self.use_NER_class)
+
+        self.EL.load_dataset(self.test_dataset)
+        self.EL.ned_tests()
+        print(self.EL.get_accuracy())
+
+    def test_run_ned_Math(self):
+        ner_id = 0  # Spacy
+        ned_id = 2  # Math
+
+        self.EL.select_ner(ner_id)
+        self.EL.select_ned(ned_id, self.use_NER_class)
+
+        self.EL.load_dataset(self.test_dataset)
+        self.EL.ned_tests()
+        print(self.EL.get_accuracy())
+
+
 if __name__ == '__main__':
     unittest.main()

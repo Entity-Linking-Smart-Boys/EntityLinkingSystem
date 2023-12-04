@@ -12,18 +12,14 @@ class Entity(object):
         self.surface_form: str 
         self.ner_class: str 
         self.position: (int, int) 
-        self.sentence_number 
-        self.sentence_text 
         self.uri: str
         self.dbpedia_class: str 
         self.candidates: list[Candidate] 
 
-    def __init__(self, surface_form: str, ner_class: str, position: (int, int), sentence_number: int, sentence_text: str) -> None:
+    def __init__(self, surface_form: str, ner_class: str, position: (int, int)) -> None:
         self.surface_form: str = surface_form
         self.ner_class: str = ner_class
         self.position: (int, int) = position
-        self.sentence_number = sentence_number
-        self.sentence_text = sentence_text
         self.uri: str = ""
         self.dbpedia_class: str = " "
         self.candidates: list[Candidate] = []
@@ -57,7 +53,7 @@ class TestEntity(Entity):
         self.target_uri = target_uri
         self.uri: str = ""
         self.dbpedia_class: str = " "
-        super().__init__(surface_form, ner_class, position, sentence_number, sentence_text)
+        super().__init__(surface_form, ner_class, position)
 
     def accurate(self):
         return self.uri == self.target_uri

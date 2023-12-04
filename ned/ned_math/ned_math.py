@@ -27,6 +27,8 @@ class NEDMath(NEDComponent):
         self.entities = []
         self.generate_candidates(text)
 
+        self.set_sentence_text_for_entities(text)
+
         self.disambiguate_candidates()
 
         [entity.set_uri_from_candidates() for entity in self.entities]
@@ -53,3 +55,14 @@ class NEDMath(NEDComponent):
         self.sort_candidates_by_total_score()
 
         self.print_disambiguated_entities(top_n=5)
+
+    def set_sentence_text_for_entities(self, text: Text):
+        sentences = [s.strip() for s in text.text.split(".") if s.strip()]
+
+        for i, entity in enumerate(self.entities):
+            entity.sentence_text = ""
+
+            for sentence in sentences:
+                if entity.surface_form in sentence:
+                    entity.sentence_text = sentence
+                    break
