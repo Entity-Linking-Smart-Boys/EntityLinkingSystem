@@ -104,3 +104,48 @@ class NEDComponent(ABC):
         else:
             response_entity = dbrep.get_candidates(entity, max_results, self.candidateType)
             return response_entity
+
+    def add_dbpedia_class_to_entities(self):
+        # map entities to dbpedia ontology classes
+        for i in range(len(self.entities)):
+            self.entities[i] = self.map_entity_type_to_dbpedia_ontology(self.entities[i])
+
+        # remove entities, that were not mapped into dbpedia ontology classes
+        self.remove_unmapped_entities()
+
+    def map_entity_type_to_dbpedia_ontology(self, entity: Entity):
+        """
+        Map the spaCy type of entity into the types of DBpedia ontology.
+        This method allows to specify the type of entity in terms of DBpedia ontology and create effective SPARQL queries.
+
+        :param entity: entity to map
+        :return:
+        """
+        spacy_to_dbpedia_ontology_mapping = {
+            "PERSON": "Agent",  # People, including fictional.
+            "NORP": "Agent, Species",  # Nationalities or religious or political groups.
+            "FAC": "Building, ArchitecturalStructure, Infrastructure",  # Buildings, airports, highways, bridges, etc.
+            "ORG": "Agent",  # Companies, agencies, institutions, etc.
+            "GPE": "Place, Agent, Building",  # Countries, cities, states.
+            "LOC": "Place",  # Non-GPE locations, mountain ranges, bodies of water.
+            "PRODUCT": "MeanOfTransportation, Food, Device",  # Objects, vehicles, foods, etc. (Not services.)
+            "EVENT": "Event",  # Named hurricanes, battles, wars, sports events, etc.
+            "WORK_OF_ART": "Work",  # Titles of books, songs, etc.
+            "LAW": "Work",  # Named documents made into laws.
+            "LANGUAGE": "Language",  # Any named language.
+            # DATE:       #  Absolute or relative dates or periods.
+            # TIME:       # Times smaller than a day.
+            # PERCENT:   #   Percentage, including ”%“.
+            # MONEY:     #   Monetary values, including unit.
+            # QUANTITY:  #   Measurements, as of weight or distance.
+            # ORDINAL:   #   “first”, “second”, etc.
+            "CARDINAL": "TopicalConcept"  # Numerals that do not fall under another type.
+        }
+
+        entity.dbpedia_class = spacy_to_dbpedia_ontology_mapping.get(entity.ner_class)
+
+        return entity
+
+    def remove_unmapped_entities(self):
+        self.entities = list(filter(lambda entity: entity.dbpedia_class is not None, self.entities))
+
