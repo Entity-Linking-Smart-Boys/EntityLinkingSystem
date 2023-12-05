@@ -1,6 +1,5 @@
 import sys
 import ctypes
-# from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QLabel, QPushButton
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -122,7 +121,7 @@ class DesktopApplication(QMainWindow):
         label1 = QLabel("", self)
         label1.setFixedSize(220, self.height())
 
-        # EKSERYMENT
+        # EXPERIMENT
         left_layout_widget = QWidget(self)
         left_layout = QVBoxLayout(left_layout_widget)
         left_layout.addWidget(label1)
