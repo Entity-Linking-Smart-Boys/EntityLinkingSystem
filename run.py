@@ -6,14 +6,15 @@ if __name__ == "__main__":
 
     EL = EntityLinkingSystem()
     EL.select_ner(0)
-    EL.select_ned(ned_id=0, use_NER_class=False)
+    EL.select_ned(0)
+    EL.ned_use_ner_class(False)
 
     #EL.load_dataset("test_datasets/aida_test.json")
     EL.load_dataset("test_datasets/ace2004_test.json")
 
-    #EL.text = EL.test.get_text(0)
+    EL.text = EL.test.get_text(0)
     #EL.ned()
-    
+    EL.test.dataset = [EL.test.dataset[0]]
     EL.ned_tests()
     print(EL.get_accuracy())
 
@@ -27,7 +28,7 @@ if __name__ == "__main__":
 #     EL.ner()
 #     # print(EL.text.get_tagged_text())
 
-#     EL.save_html("siem.html")
+    EL.save_html("siem.html")
 
 #     EL.ned()
 

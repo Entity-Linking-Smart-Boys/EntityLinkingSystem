@@ -56,9 +56,14 @@ class TestEntity(Entity):
         super().__init__(surface_form, ner_class, position)
 
     def accurate(self):
-        return self.uri == self.target_uri
+        if hasattr(self,'uri'):
+            return self.uri == self.target_uri
+        else:
+            return False
         #TODO: ? return self.wikipageID == get_wikipageID_from_uri(): ????
 
     def to_html(self) -> str:
         #TODO: comparing results html
-        return super().to_html()
+        return f"<span class=\"{'correct' if self.accurate() else 'wrong'}\"><a href=\"{self.uri if hasattr(self,'uri') else ''}\">{self.surface_form}</a><sup><a href=\"{self.target_uri if hasattr(self,'target_uri') else ''}\">Correct Resource</a> <br> |{self.ner_class if hasattr(self,'ner_class') else ''} | {self.dbpedia_class if hasattr(self,'dbpedia_class') else ''}</sup></span>"
+
+#        return super().to_html()

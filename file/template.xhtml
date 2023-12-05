@@ -25,10 +25,12 @@
                 position: relative;
             }
             a {
-                color: red;
                 position: relative;
                 display: inline-block;
                 border-bottom: 1px dotted black;
+            }
+            span:not(:is(.correct,.wrong)) a{
+                color: red;
             }
             sup {
                 padding-right: auto;
@@ -49,6 +51,18 @@
             }
             span a:hover + sup {
                 visibility: visible;
+            }
+            span sup:hover {
+                visibility: visible;
+            }
+            .correct {
+                background-color: darkgreen;
+            }
+            .wrong {
+                background-color: darkred;
+            }
+            span:is(.correct,.wrong) a{
+                color: red;;
             }
         </style>
     </head>
