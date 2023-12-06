@@ -1,25 +1,51 @@
+
+<!-- TOC --><a name="entity-linking-system"></a>
 # Entity Linking System
 
 The Entity Linking System is a project designed to enable users to tag input text using a desktop application. The system incorporates a powerful Entity Recognition (NER) and Entity Disambiguation (NED) mechanism, utilizing the DBpedia Lookup service. This system enhances the understanding of textual data by linking recognized entities to their corresponding entries in the DBpedia knowledge base.
 
+<!-- TOC --><a name="requirements"></a>
+
+## Table of contents:
+- [Entity Linking System](#entity-linking-system)
+   * [Requirements](#requirements)
+   * [Installation](#installation)
+   * [Named Entity Recognition](#named-entity-recognition)
+      + [NER using spaCy](#ner-using-spacy)
+      + [NER using BERT model](#ner-using-bert-model)
+   * [Named Entity Disambiguation](#named-entity-disambiguation)
+      + [Algorithm Structure](#algorithm-structure)
+      + [Developed EL Algorithms](#developed-el-algorithms)
+   * [Desktop Application Features](#desktop-application-features)
+      + [Input Options](#input-options)
+      + [Configuration Options](#configuration-options)
+      + [Entity Linking Process](#entity-linking-process)
+      + [Results Display](#results-display)
+   * [Usage](#usage)
+
+
 ## Requirements
 - **Python 3.10:** Download from [the official Python.org website](https://www.python.org/downloads/)
 
+<!-- TOC --><a name="installation"></a>
 ## Installation
 ```bash
 pip install -r .\requirements.txt
 python -m spacy download en_core_web_lg  # needed for NER using spaCy
 ```
 
+<!-- TOC --><a name="named-entity-recognition"></a>
 ## Named Entity Recognition
 In our work we focused on two NER approaches presented in this section.
 
+<!-- TOC --><a name="ner-using-spacy"></a>
 ### NER using spaCy
 
 **spaCy**, recognized as the swiftest NLP framework in Python, stands out for its efficiency in implementing individualized functions for each NLP task. Its user-friendly nature allows for the seamless execution of straightforward tasks with just a few lines of code.
 
 Read more at the official spaCy website: [Named Entity Recognition (NER) using spaCy ](https://spacy.io/universe/project/video-spacys-ner-model-alt)
 
+<!-- TOC --><a name="ner-using-bert-model"></a>
 ### NER using BERT model
 
 In our work, we focus on the **BERT model**, a Transformer-based architecture, leveraging its unique features:
@@ -48,10 +74,12 @@ In our work, we focus on the **BERT model**, a Transformer-based architecture, l
   - Essential component of the Transformer architecture.
   - Contributes to the model's ability to process and understand input data effectively.
 
+<!-- TOC --><a name="named-entity-disambiguation"></a>
 ## Named Entity Disambiguation
 
 Three robust Entity Linking (EL) algorithms have been meticulously crafted by amalgamating the previously outlined candidate disambiguation approaches. The primary goal of each algorithm is to assign scores to candidates, taking into account both contextual information and other pertinent aspects related to the recognized named entity and the candidate.
 
+<!-- TOC --><a name="algorithm-structure"></a>
 ### Algorithm Structure
 
 1. **Partial Scores:** Candidates within each algorithm are subject to receiving partial scores from each disambiguation approach. These partial scores collectively contribute to the final score of the candidate.
@@ -64,6 +92,7 @@ Three robust Entity Linking (EL) algorithms have been meticulously crafted by am
 
 5. **Sorting:** The concluding step involves sorting candidates in descending order based on their final total score, which is the sum of all partial scores for that candidate. The candidate holding the highest score in the sorted list is identified as the best candidate according to the algorithm.
 
+<!-- TOC --><a name="developed-el-algorithms"></a>
 ### Developed EL Algorithms
 
 1. **NED Lookup-Context-Levenshtein:**
@@ -87,12 +116,15 @@ Three robust Entity Linking (EL) algorithms have been meticulously crafted by am
 
 These EL algorithms offer users flexibility in choosing the approach that aligns with their specific requirements and preferences. Whether prioritizing contextual similarity, connectivity, or simplicity, these algorithms cater to diverse needs in the entity linking process.
 
+<!-- TOC --><a name="desktop-application-features"></a>
 ## Desktop Application Features
 Upon launching the application, users are presented with a single window that encompasses three distinct panels.
 
+<!-- TOC --><a name="input-options"></a>
 ### Input Options
 - **Input Text:** Users can either manually input text or import text from a *.txt file, providing flexibility for various use cases.
 
+<!-- TOC --><a name="configuration-options"></a>
 ### Configuration Options
 **Left Panel:**
 - This panel hosts various components for input and configuration.
@@ -106,14 +138,17 @@ Upon launching the application, users are presented with a single window that en
   - **"Start" Button:** Initiates the selected algorithms and outputs the tagged text into the middle panel.
 
     
+<!-- TOC --><a name="entity-linking-process"></a>
 ### Entity Linking Process
 - **Run Entity Linking:** Initiates the Entity Linking process, where the system analyzes the input text to identify entities and link them to relevant DBpedia entries.
 - **Processing Time:** The duration of the Entity Linking process depends on the length of the text. Longer texts may require several minutes for comprehensive analysis.
 
+<!-- TOC --><a name="results-display"></a>
 ### Results Display
 - **Middle Panel:** The linked entities are displayed in this panel after the Entity Linking process. Each entity is associated with a hyperlink.
 - **Right Panel:** Clicking on a recognized and linked entity's hyperlink opens the corresponding DBpedia webpage, providing additional information about the entity.
 
+<!-- TOC --><a name="usage"></a>
 ## Usage
 1. Launch the application.
 2. Input or import text.
