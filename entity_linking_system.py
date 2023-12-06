@@ -13,7 +13,7 @@ from ner.ner_spacy.ner_spacy import NERSpacy
 from ned.ned_math.ned_math import NEDMath
 from ned.ned_graph.ned_graph import NEDGraph
 from ned.ned_dbpedia_lookup.ned_dbpedia_lookup import NEDDBpediaLookup
-from tests.tests_component import TestingComponent
+from tests.evaluation_component import EvaluationComponent
 
 
 class EntityLinkingSystem:
@@ -26,7 +26,7 @@ class EntityLinkingSystem:
         """Swappable Named Entity Recogniton Component"""
         self.NED: NEDComponent
         """Swappable Named Entity Disamiguation Component"""
-        self.test = TestingComponent()
+        self.test = EvaluationComponent()
 
 
         self.text: Text

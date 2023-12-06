@@ -6,7 +6,7 @@ sys.path.append('../.')
 from data.text import TestText
 
 
-class TestingComponent:
+class EvaluationComponent:
     def __init__(self) -> None:
         self.dataset: [TestText]
         self.micro_acc = 0

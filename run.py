@@ -1,5 +1,5 @@
 from entity_linking_system import EntityLinkingSystem
-from tests.tests_component import TestingComponent
+from tests.evaluation_component import EvaluationComponent
 
 if __name__ == "__main__":
 #     text_str = "Nikola Tesla (Serbian Cyrillic: Никола Тесла) was a Serbian-American inventor, electrical engineer, mechanical engineer, and futurist best known for his contributions to the design of the modern alternating current (AC) electricity supply system."
