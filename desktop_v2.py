@@ -107,6 +107,7 @@ class DesktopApplication(QMainWindow):
         self.setWindowTitle("NERD")
         self.setWindowIcon(QIcon("file/icon.png"))
         self.setGeometry(constant.APP_POS_X, constant.APP_POS_Y, constant.APP_WIDTH, constant.APP_HEIGHT)  # Set initial position (x, y) and size (width, height)
+        self.setFixedSize(constant.APP_WIDTH, constant.APP_HEIGHT + 20)
         # self.setWindowFlags(Qt.FramelessWindowHint)
 
         # Create the main widget and set it as the central widget
@@ -127,7 +128,7 @@ class DesktopApplication(QMainWindow):
         left_layout.addWidget(label1)
         left_layout.setContentsMargins(0,0,0,0)
         #left_layout.addWidget(label1)
-        left_layout_widget.setFixedSize(220, self.height())
+        left_layout_widget.setFixedSize(220, constant.APP_HEIGHT)
 
 
         # TEXTBOX
@@ -218,7 +219,7 @@ class DesktopApplication(QMainWindow):
         
         #self.app_html_section = QWebEnginePage(self)
         self.app_html_section = QWebEngineView(self)
-        self.app_html_section.setFixedSize(510, self.height())
+        self.app_html_section.setFixedSize(510, constant.APP_HEIGHT)
         
         # self.setCentralWidget(self.app_html_section)
         # self.setFixedSize(width, height)
@@ -229,7 +230,7 @@ class DesktopApplication(QMainWindow):
         #--------------MANAGING RIGHT PANEL--------------#
         # DBPedia section
         self.dbpedia = QWebEngineView(self)
-        self.dbpedia.setFixedSize(510, self.height())
+        self.dbpedia.setFixedSize(510, constant.APP_HEIGHT)
         self.app_html_section.setPage(CustomWebEnginePage(self.dbpedia, self))
         
 
@@ -333,11 +334,17 @@ class DesktopApplication(QMainWindow):
     def on_start_ned_test(self):
         # if not self.EL.NED:
         #     return
+        if not hasattr(self.EL.test, "dataset"):
+            return
         self.EL.select_ned(self.selectedNED)
 
 
-        self.EL.ned_tests()
+        #self.unckeck_ner_classes()
+        #self.use_ner_class = False
+        class_status = self.EL.ned_use_ner_class
         self.EL.ned_use_ner_class(False)
+        self.EL.ned_tests()
+        self.EL.ned_use_ner_class = class_status
 
         accuracies = self.EL.get_accuracy()
 
@@ -358,7 +365,7 @@ class DesktopApplication(QMainWindow):
         else:
             title = "Load file"
             extensions = "TXT|JSON (*.txt *.json);;HTML Files (*.html)"
-            initial_dir = "tests"
+            initial_dir = "examples"
 
         # path_to_file, _ = QFileDialog.getOpenFileName(self,"Load file", None,"TXT|JSON (*.txt *.json);;HTML Files (*.html)", options=options)
         path_to_file, _ = QFileDialog.getOpenFileName(self, title, initial_dir, extensions, options=options)
