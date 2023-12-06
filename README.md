@@ -8,8 +8,84 @@ The Entity Linking System is a project designed to enable users to tag input tex
 ## Installation
 ```bash
 pip install -r .\requirements.txt
-python -m spacy download en_core_web_lg
+python -m spacy download en_core_web_lg  # needed for NER using spaCy
 ```
+
+## Named Entity Recognition
+In our work we focused on two NER approaches presented in this section.
+
+### NER using spaCy
+
+**spaCy**, recognized as the swiftest NLP framework in Python, stands out for its efficiency in implementing individualized functions for each NLP task. Its user-friendly nature allows for the seamless execution of straightforward tasks with just a few lines of code.
+
+Read more at the official spaCy website: [Named Entity Recognition (NER) using spaCy ](https://spacy.io/universe/project/video-spacys-ner-model-alt)
+
+### NER using BERT model
+
+In our work, we focus on the **BERT model**, a Transformer-based architecture, leveraging its unique features:
+
+- **Parallel Input Processing:**
+  - Drastically speeds up model training time.
+  - Particularly beneficial for batch training.
+  - Allows efficient usage of hardware units like GPUs and TPUs.
+
+- **Input Embedding Layer:**
+  - Converts input tokens into continuous vector representations.
+  - Vectors learned during training and stored in an embedding matrix.
+  - Enables mathematical operations on vector representations, simulating language understanding.
+
+- **Positional Encoding Layer:**
+  - Addresses the importance of token positioning within a sentence.
+  - Typically generated using sinusoidal functions.
+  - Combined representation captures semantic meaning and position in the sequence.
+
+- **Multi-Head Attention Layer:**
+  - Key feature of the Transformer architecture.
+  - Allows the model to focus on different aspects of the input simultaneously.
+  - Improves the ability to capture both local and global dependencies.
+
+- **Feed Forward Layer:**
+  - Essential component of the Transformer architecture.
+  - Contributes to the model's ability to process and understand input data effectively.
+
+## Named Entity Disambiguation
+
+Three robust Entity Linking (EL) algorithms have been meticulously crafted by amalgamating the previously outlined candidate disambiguation approaches. The primary goal of each algorithm is to assign scores to candidates, taking into account both contextual information and other pertinent aspects related to the recognized named entity and the candidate.
+
+### Algorithm Structure
+
+1. **Partial Scores:** Candidates within each algorithm are subject to receiving partial scores from each disambiguation approach. These partial scores collectively contribute to the final score of the candidate.
+
+2. **Equal Weightage:** All disambiguation approaches within a given algorithm carry equal weight, ensuring a balanced influence on the final candidate score.
+
+3. **Normalization:** To maintain consistency and fairness, a normalization process is applied to each partial score. This mapping transforms each score into a value within the range of 0 to 1. The candidate with the highest score attains a normalized partial score of 1, while the lowest-scoring candidate receives a normalized partial score of 0. This normalization procedure guarantees that each disambiguation approach contributes proportionally to the final candidate score, facilitating a just and standardized evaluation.
+
+4. **Final Scores:** The resultant final scores, ranging between 0 and 1, facilitate a straightforward ranking. Candidates closer to 1 are prioritized as more suitable disambiguation outcomes.
+
+5. **Sorting:** The concluding step involves sorting candidates in descending order based on their final total score, which is the sum of all partial scores for that candidate. The candidate holding the highest score in the sorted list is identified as the best candidate according to the algorithm.
+
+### Developed EL Algorithms
+
+1. **NED Lookup-Context-Levenshtein:**
+   - **Components:**
+     - DBpedia Lookup Score
+     - Context Similarity
+     - Levenshtein Distance Calculation
+   - **Objective:** This algorithm combines the DBpedia Lookup Score with additional layers of context-based similarity and Levenshtein Distance calculation. The synergy of these components enhances the precision and relevance of the entity linking process.
+
+2. **NED Lookup-Connectivity-Popularity:**
+   - **Components:**
+     - DBpedia Lookup Score
+     - Connectivity Analysis
+     - Popularity of Candidates
+   - **Objective:** In this algorithm, the DBpedia Lookup Score is complemented by insights from connectivity analysis and the overall popularity of candidates. This multi-faceted approach aims to provide a comprehensive evaluation of candidate entities.
+
+3. **NED Lookup:**
+   - **Components:**
+     - DBpedia Lookup Score
+   - **Objective:** Focused on simplicity and efficiency, this algorithm relies solely on the DBpedia Lookup Score. It provides a streamlined approach for users seeking a straightforward and effective entity linking solution.
+
+These EL algorithms offer users flexibility in choosing the approach that aligns with their specific requirements and preferences. Whether prioritizing contextual similarity, connectivity, or simplicity, these algorithms cater to diverse needs in the entity linking process.
 
 ## Desktop Application Features
 Upon launching the application, users are presented with a single window that encompasses three distinct panels.
