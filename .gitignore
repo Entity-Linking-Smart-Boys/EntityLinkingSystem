@@ -158,3 +158,4 @@ cython_debug/
 ontology/dbpedia_ontology_parsed.owl
 siem.html
 dbpedia
+ner/ner_multinerd/model/pytorch_model.bin

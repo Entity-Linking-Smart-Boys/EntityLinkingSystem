@@ -158,7 +158,7 @@ class DesktopApplication(QMainWindow):
 
         self.checkbox_ner = QCheckBox('Use NER', self)
         self.checkbox_ner.move(150,240)
-        self.checkbox_ner.resize(60, constant.ELM_HEIGHT)
+        self.checkbox_ner.resize(80, constant.ELM_HEIGHT)
         self.checkbox_ner.stateChanged.connect(self.set_ner)
 
 
@@ -170,7 +170,7 @@ class DesktopApplication(QMainWindow):
 
         self.checkbox_ned = QCheckBox('Use NED', self)
         self.checkbox_ned.move(150,280)
-        self.checkbox_ned.resize(60, constant.ELM_HEIGHT)
+        self.checkbox_ned.resize(80, constant.ELM_HEIGHT)
         self.checkbox_ned.stateChanged.connect(self.set_ned)
         '''Choice component (ner and ned choice)'''
 
