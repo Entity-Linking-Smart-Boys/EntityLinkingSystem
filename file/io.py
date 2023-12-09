@@ -33,10 +33,16 @@ class FileIO:
     
     def load_tagged(self,textPath) -> Text:
         """Load json from txt file"""
-        file = open(textPath, encoding="utf-8")
+        file = open(textPath, "r" ,encoding="utf-8")
         json_file = file.read()
         file.close()
-        text = jsonpickle.decode(json.loads(json_file))
+
+        x= json.loads(json_file)
+    
+        try:
+            text = jsonpickle.decode(x)
+        except:
+            text = jsonpickle.decode(json.dumps(x,ensure_ascii=False))
         return text
     
 
@@ -53,7 +59,7 @@ class FileIO:
 
     def save_tagged(self, text: Text, path) -> None:
         """Save text to json file"""
-        json_text = json.dumps(jsonpickle.encode(text))
+        json_text = json.dump(jsonpickle.encode(text))
         file = open(path,mode = "w",encoding="utf-8")
         file.write(json_text)
         file.close()

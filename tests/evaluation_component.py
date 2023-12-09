@@ -53,9 +53,9 @@ class EvaluationComponent:
         for set in self.dataset:
             set: TestText
             try:
-                count += set.get_entities_count()
                 accurate += set.get_accurate_count()
                 sum += set.get_ned_accuracy()
+                count += set.get_entities_count()
             except:
                 wrong += 1
         self.micro_acc = accurate / count
