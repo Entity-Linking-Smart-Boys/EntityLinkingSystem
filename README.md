@@ -33,7 +33,9 @@ The Entity Linking System is a project designed to enable users to tag input tex
 pip install -r .\requirements.txt
 python -m spacy download en_core_web_lg  # needed for NER using spaCy
 ```
-
+a proper working NER requires downloading a model from
+https://drive.google.com/drive/folders/1Tb-iu-pB9kr7A63rl5K648XpgylAZbeB
+and placing it in /ner/ner_multinerd/model directory
 <!-- TOC --><a name="named-entity-recognition"></a>
 ## Named Entity Recognition
 In our work we focused on two NER approaches presented in this section.
