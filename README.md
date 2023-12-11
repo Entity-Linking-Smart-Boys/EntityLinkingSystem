@@ -22,6 +22,7 @@ The Entity Linking System is a project designed to enable users to tag input tex
       + [Entity Linking Process](#entity-linking-process)
       + [Results Display](#results-display)
    * [Usage](#usage)
+   * [License](#license)
 
 
 ## Requirements
