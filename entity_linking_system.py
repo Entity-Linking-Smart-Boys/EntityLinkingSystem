@@ -15,6 +15,8 @@ from ned.ned_graph.ned_graph import NEDGraph
 from ned.ned_dbpedia_lookup.ned_dbpedia_lookup import NEDDBpediaLookup
 from tests.evaluation_component import EvaluationComponent
 
+from ner.ner_conll.ner_conll import NERConll
+from ner.ner_multinerd.ner_multinerd import NERMultinerd
 
 class EntityLinkingSystem:
     def __init__(self) -> None:
@@ -32,7 +34,7 @@ class EntityLinkingSystem:
         self.text: Text
         """Loaded Text"""
 
-        self._ners = {"Spacy": NERSpacy()}
+        self._ners = {"Spacy": NERSpacy(), "NERDBERT": NERMultinerd(), "CONLLBERT": NERConll()}
 
         self._neds = {
             "LookupNed": NEDDBpediaLookup(),
